@@ -1,5 +1,5 @@
 import { Physics, Scene } from "phaser"
-import { moveTowardXY } from "../helpers/Util";
+import { moveTowardXY, SearchDirs } from "../helpers/Util";
 import WorldScene from "./WorldScene";
 import * as v4 from 'uuid'
 
@@ -42,6 +42,26 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
             const targetTile = this.scene.map.getTileAt(path[0].x, path[0].y, false, 'terrain')
             moveTowardXY(this, targetTile.getCenterX(),targetTile.getCenterY(), this.speed)
         }
+        else {
+            const myTile = this.scene.map.getTileAtWorldXY(this.x, this.y, true, undefined, 'terrain')
+            let targetTile
+            SearchDirs.forEach(coord=>{
+                let tile = this.scene.map.getTileAt(myTile.x+coord.x, myTile.y+coord.y,false,'terrain')
+                if(tile && !tile.collides && !targetTile) targetTile = tile
+            })
+            if(targetTile) moveTowardXY(this, targetTile.getCenterX(),targetTile.getCenterY(), this.speed)
+        }
+    }
+
+    takeDamage = () => {
+        this.scene.tweens.add({
+            targets:this,
+            tint: 0xff0000,
+            yoyo:true,
+            repeat: 1,
+            duration:250
+        })
+        this.health--
     }
 
     destroy(){

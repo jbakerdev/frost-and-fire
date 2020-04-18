@@ -43,7 +43,7 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
         return (
             <div style={{position:'relative'}}>
                 <div style={{position:'absolute', top:0, left:0}}>
-                    <div style={{transform: 'rotate('+360*(this.props.hour/24)+'deg)'}}>{Icon(Icons.sun_moon, '', true)}</div>
+                    <div style={{transition:'all 250ms', transform: 'rotate('+360*(this.props.hour/24)+'deg)', width:'32px', height:'32px'}}>{Icon(Icons.sun_moon, '', true)}</div>
                     <h5>{this.props.hour}:00</h5>
                 </div>
                 <CanvasFrame />

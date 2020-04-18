@@ -17,17 +17,27 @@ export const TileIndexes = {
     colonist: 9,
     frost: {
          frostTile: 4, 
-         frostWave: 10,
+         frostWave: 11,
          impassible: 7,
-         passable: 6 
+         passable: 6,
+         debris: 14
     },
     fire: { 
         fireTile: 5, 
-        fireWave: 11,
+        fireWave: 10,
         passable: 3,
-        impassible: 8
+        impassible: 8,
+        debris:13
     }
 }
+
+export const DebrisShapes = [
+    [{x:0,y:0},{x:-1,y:0},{x:0,y:1},{x:1,y:0},{x:0,y:-1}],
+    [{x:0,y:0},{x:1,y:0},{x:2,y:1},{x:2,y:-1}],
+    [{x:0,y:0},{x:1,y:0},{x:0,y:1},{x:1,y:1}],
+    [{x:0,y:0},{x:1,y:0},{x:2,y:0},{x:3,y:0}],
+    [{x:0,y:0},{x:1,y:0},{x:2,y:0},{x:1,y:1}],
+]
 
 export const Icons = {
     sun_moon: require('./icon/sun_moon.png'),

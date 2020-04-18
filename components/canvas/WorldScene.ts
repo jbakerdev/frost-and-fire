@@ -1,11 +1,12 @@
 import { Scene, GameObjects, Tilemaps, Geom, Physics } from "phaser";
 import { store } from "../../App";
-import { defaults, TileIndexes, PassableIndexes } from '../../assets/Assets'
+import { defaults, TileIndexes, PassableIndexes, DebrisShapes } from '../../assets/Assets'
 import { _getCircle } from "../helpers/Fov";
 import ColonistSprite from "./ColonistSprite";
 import AStar from "../helpers/AStar";
 import { onSetWaveInactive, onUpdateHour, onToggleAimLaser, onToggleAimCryo } from "../uiManager/Thunks";
 import { UIReducerActions } from "../../enum";
+import { isFrostTile } from "../helpers/Util";
 
 export default class WorldScene extends Scene {
 
@@ -62,8 +63,9 @@ export default class WorldScene extends Scene {
         let tileset = this.map.addTilesetImage('tiles', 'tilemap')
         let terrain = this.map.createDynamicLayer('terrain', tileset).setCollisionByExclusion(PassableIndexes)
         this.physics.add.collider(this.colonistSprites, terrain)
+        this.physics.add.overlap(this.colonistSprites, terrain, this.colonistOverTile)
         let doodads = this.map.createStaticLayer('doodads', tileset)
-        this.physics.add.collider(this.colonistSprites, doodads, this.colonistHitFeature)
+        this.physics.add.overlap(this.colonistSprites, doodads, this.colonistHitFeature)
         doodads.forEachTile(t=>{
             if(t.index === TileIndexes.entrance) this.levelEntrance = { x: t.x, y: t.y }
             if(t.index === TileIndexes.exit) this.levelExit = { x: t.x, y: t.y }
@@ -98,7 +100,7 @@ export default class WorldScene extends Scene {
         })
 
         this.time.addEvent({
-            delay: 1000,
+            delay: 3000,
             callback: () => {
                 this.onHourTick()
             },
@@ -109,12 +111,12 @@ export default class WorldScene extends Scene {
     fireLaser = (worldCoords:Tuple) => {
         let target = this.map.getTileAtWorldXY(worldCoords.x, worldCoords.y, true, undefined, 'terrain')
         this.cameras.main.flash(200,200,0,0)
-        if(target.index === TileIndexes.frost.impassible){
+        if(target.index === TileIndexes.frost.impassible || target.index === TileIndexes.frost.debris){
             target.index = TileIndexes.frost.passable
             target.setCollision(false)
             this.tileData[target.x][target.y].collides = false
         } 
-        else if(target.index === TileIndexes.fire.impassible){
+        else if(target.index === TileIndexes.fire.impassible || target.index === TileIndexes.fire.debris){
             target.index = TileIndexes.fire.passable
             target.setCollision(false)
             this.tileData[target.x][target.y].collides = false
@@ -141,6 +143,12 @@ export default class WorldScene extends Scene {
         if(hour === 20) this.launchWave(true)
         if(hour === 6) this.launchWave(false)
         onUpdateHour((store.getState().hour+1) % 24)
+        this.colonistSprites.forEach(spr=>{
+            if(spr.health <= 0) {
+                this.deaths.get(spr.x, spr.y, 'bones')
+                spr.destroy()
+            }
+        })
     }
 
     launchWave = (isFrost:boolean) => {
@@ -155,7 +163,7 @@ export default class WorldScene extends Scene {
         this.tweens.add({
             targets: wave,
             x: this.map.widthInPixels,
-            duration: 5000,
+            duration: 10000,
             onUpdate: ()=>{
                 let rect = wave.getBounds()
                 this.map.getTilesWithinShape(rect, undefined, undefined, 'terrain').forEach(tile=>{
@@ -174,10 +182,32 @@ export default class WorldScene extends Scene {
                     this.deaths.get(spr.x, spr.y, 'bones')
                     spr.destroy()
                 }
+                if(Phaser.Math.Between(0,10) === 10) this.triggerAvalanche()
             },
             onComplete: () => {
                 rotator.remove()
                 wave.destroy()
+            }
+        })
+    }
+
+    triggerAvalanche = () => {
+        let shape = DebrisShapes[Phaser.Math.Between(0,DebrisShapes.length-1)]
+        let shapeTilePos = {x: Phaser.Math.Between(0,this.map.width), y: Phaser.Math.Between(0, this.map.height)}
+        this.cameras.main.shake(200, 0.001)
+        shape.forEach(offset=>{
+            let tile = this.map.getTileAt(shapeTilePos.x+offset.x, shapeTilePos.y+offset.y, false, 'terrain')
+            if(tile){
+                if(Phaser.Math.Between(0,1)===1){
+                    if(isFrostTile(tile.index)) tile.index = TileIndexes.frost.debris
+                    else tile.index = TileIndexes.fire.debris
+                    tile.setCollision(true)
+                    this.tileData[tile.x][tile.y].collides = true
+                }
+                else {
+                    if(isFrostTile(tile.index)) tile.index = TileIndexes.frost.frostTile
+                    else tile.index = TileIndexes.fire.fireTile
+                }
             }
         })
     }
@@ -188,6 +218,12 @@ export default class WorldScene extends Scene {
             this.colonistSprites = this.colonistSprites.filter(spr=>spr.id !== colonistSprite.id)
             colonistSprite.destroy()
             //onColonistEscaped
+        }
+    }
+
+    colonistOverTile = (colonistSprite:any, tile:any) => {
+        if(tile.index === TileIndexes.frost.frostTile || tile.index === TileIndexes.fire.fireTile){
+            colonistSprite.takeDamage()
         }
     }
 

@@ -3,6 +3,11 @@ import { GameObjects, Tilemaps, Physics } from 'phaser';
 import { store } from '../../App';
 import { compute, _getCircle } from './Fov';
 import AStar from './AStar';
+import { TileIndexes } from '../../assets/Assets';
+
+export const SearchDirs = [
+    {x:1,y:0},{x:0,y:1},{x:0,y:-1},{x:-1,y:0}
+]
 
 export const runSpriteFOV = (sprite:GameObjects.Sprite, tileData:Array<Array<TileInfo>>, map:Tilemaps.Tilemap, getAllTilesAt:Function) => {
     let sight = 3
@@ -43,4 +48,8 @@ export const moveTowardXY = (currentSprite:Physics.Arcade.Sprite, x:number, y:nu
     let mag = Math.sqrt(dir.x*dir.x + dir.y*dir.y);
     dir.x = dir.x/mag; dir.y = dir.y/mag;
     currentSprite.setVelocity(dir.x*speed, dir.y*speed)
+}
+
+export const isFrostTile = (index:number) => {
+    return index === TileIndexes.frost.debris||index === TileIndexes.frost.frostTile||index === TileIndexes.frost.frostWave||index === TileIndexes.frost.impassible||index === TileIndexes.frost.passable
 }

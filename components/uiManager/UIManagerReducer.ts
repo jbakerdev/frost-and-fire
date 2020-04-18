@@ -9,6 +9,8 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, activeWave: true, engineEvent: UIReducerActions.START_WAVE }
         case UIReducerActions.WAVE_SENT:
             return { ...state, activeWave: false, engineEvent:null}
+        case UIReducerActions.SET_HOUR:
+            return { ...state, hour: action.hour, engineEvent:null}
         default:
             return state
     }
@@ -20,6 +22,7 @@ const getInitialState = ():RState => {
     return {
         modal: null,
         activeWave: false,
-        engineEvent: null
+        engineEvent: null,
+        hour: 18
     }
 }

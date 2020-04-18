@@ -12,3 +12,7 @@ export const onStartWave = () => {
 export const onSetWaveInactive = () => {
     dispatch({ type: UIReducerActions.WAVE_SENT })
 }
+
+export const onUpdateHour = (hour:number) => {
+    dispatch({ type: UIReducerActions.SET_HOUR, hour })
+}

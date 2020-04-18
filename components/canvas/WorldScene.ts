@@ -4,7 +4,7 @@ import { defaults, TileIndexes, PassableIndexes } from '../../assets/Assets'
 import { _getCircle } from "../helpers/Fov";
 import ColonistSprite from "./ColonistSprite";
 import AStar from "../helpers/AStar";
-import { onSetWaveInactive } from "../uiManager/Thunks";
+import { onSetWaveInactive, onUpdateHour } from "../uiManager/Thunks";
 import { UIReducerActions } from "../../enum";
 
 export default class WorldScene extends Scene {
@@ -79,6 +79,60 @@ export default class WorldScene extends Scene {
         })
         this.cameras.main.setZoom(2)
         this.cameras.main.centerOn(this.map.widthInPixels/2, this.map.heightInPixels/2)
+
+        this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                this.onHourTick()
+            },
+            repeat: -1
+        })
+    }
+
+    onHourTick = () => {
+        let hour = store.getState().hour
+        if(hour === 20) this.launchWave(true)
+        if(hour === 6) this.launchWave(false)
+        onUpdateHour((store.getState().hour+1) % 24)
+    }
+
+    launchWave = (isFrost:boolean) => {
+        let wave = this.add.tileSprite(0,32,32,this.map.heightInPixels*2, 'tiles', isFrost ? TileIndexes.frost.frostWave : TileIndexes.fire.fireWave).setDepth(2)
+        let rotator = this.time.addEvent({
+            delay:200,
+            repeat:-1,
+            callback: ()=> {
+                wave.tilePositionX-=5
+            }
+        })
+        this.tweens.add({
+            targets: wave,
+            x: this.map.widthInPixels,
+            duration: 5000,
+            onUpdate: ()=>{
+                let rect = wave.getBounds()
+                this.map.getTilesWithinShape(rect, undefined, undefined, 'terrain').forEach(tile=>{
+                    if(isFrost){
+                        if(tile.collides) tile.index = TileIndexes.frost.impassible
+                        else tile.index = TileIndexes.frost.passable
+                    }
+                    else {
+                        if(tile.collides) tile.index = TileIndexes.fire.impassible
+                        else tile.index = TileIndexes.fire.passable
+                    }
+                })
+                let bodies = this.physics.overlapRect(rect.x, rect.y, rect.width, rect.height)
+                for(var i=0;i<bodies.length;i++){
+                    let spr = bodies[i].gameObject as ColonistSprite
+                    this.deaths.get(spr.x, spr.y, 'bones')
+                    spr.destroy()
+                }
+            },
+            onComplete: () => {
+                rotator.remove()
+                wave.destroy()
+            }
+        })
     }
 
     colonistHitFeature = (colonistSprite:any, tile:any) => {

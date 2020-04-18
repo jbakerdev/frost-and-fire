@@ -91,7 +91,7 @@ export const IconSelect = (value:string, onValueChange:Function, values: Array<s
 
 export const ProgressBar = (value:number, max:number, tooltip?:string) => 
     <Tooltip placement="bottom" trigger={tooltip ? ['hover'] : []} overlay={<h6>{tooltip}</h6>}>
-        <div style={{width:'100%', height:'100%', background:'transparent'}}>
+        <div style={{width:'100%', height:'100%', background:'transparent', border:'1px solid'}}>
             <div style={{background:colors.lGreen, width:Math.round((value/max)*100)+'%', height:'100%'}}/>
         </div>
     </Tooltip>

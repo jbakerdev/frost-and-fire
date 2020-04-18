@@ -2,6 +2,7 @@ import { Physics, Scene } from "phaser"
 import { moveTowardXY, SearchDirs, shuffle } from "../helpers/Util";
 import WorldScene from "./WorldScene";
 import * as v4 from 'uuid'
+import { TileIndexes } from "../../assets/Assets";
 
 
 export default class ColonistSprite extends Physics.Arcade.Sprite {
@@ -13,14 +14,16 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
     health: number
     invul: boolean
    
-    constructor(scene:Scene, x:number, y:number, texture:string, frame:number){
-        super(scene, x, y, texture, frame)
+    constructor(scene:Scene, x:number, y:number){
+        super(scene, x, y, 'tiles', TileIndexes.colonist)
         scene.add.existing(this)
         scene.physics.add.existing(this)
         this.setCollideWorldBounds()
         this.setDepth(1)
         this.speed = Phaser.Math.Between(35,60)
         this.health = Phaser.Math.Between(5,20)
+        this.body.setSize(16,8)
+        this.body.setOffset(0,8)
         this.setScale(this.getScale())
         this.id = v4()
         this.timer = scene.time.addEvent({
@@ -76,7 +79,25 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
         }
     }
 
-    destroy(){
+    heal = (amount:number) => {
+        this.health+=amount
+        this.setTintFill(0x00ff00)
+        this.scene.tweens.addCounter({
+            from: 255,
+            to: 0,
+            duration: 700,
+            onUpdate: (tween) => {
+                var value = Math.floor(tween.getValue());
+                this.setTintFill(Phaser.Display.Color.GetColor(0, value, 0));
+            },
+            onComplete: () => {
+                this.invul = false
+                this.clearTint()
+            }
+        })
+    }
+
+    destroy = () => {
         this.timer.remove()
         super.destroy()
     }

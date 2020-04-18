@@ -4,7 +4,15 @@ declare enum UIReducerActions {
     WAVE_SENT='wves',
     SET_HOUR='shr',
     AIM_CRYO='aim_c',
-    AIM_LASER='aim_l'
+    AIM_LASER='aim_l',
+    CANCEL='cans',
+    USE_REACTOR='ureact',
+    CHARGE_REACTOR='chrege',
+    SAVE_COLONIST='saved',
+    COLONIST_LOST='lost',
+    START_PLACE_DRONE='place',
+    PLACE_DRONE='pld',
+    NO_CHARGE='nchrg'
 }
 
 declare enum Modal {
@@ -37,4 +45,10 @@ interface RState {
     hour: number
     aimLaser: boolean
     aimCryo: boolean
+    placingDrone: boolean
+    reactorCharges: number
+    maxReactorCharges: number
+    colonistsRemaining: number
+    colonistsSaved: number
+    crew: number
 }

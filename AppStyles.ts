@@ -37,7 +37,8 @@ export default {
     buttonInner: {
         border:'1px solid', padding:'5px',
         background:'black',
-        cursor:'pointer'
+        cursor:'pointer',
+        display:'flex'
     },
     topBar: {
         background: colors.grey2,

@@ -4,9 +4,10 @@ import { defaults, TileIndexes, PassableIndexes, DebrisShapes } from '../../asse
 import { _getCircle } from "../helpers/Fov";
 import ColonistSprite from "./ColonistSprite";
 import AStar from "../helpers/AStar";
-import { onSetWaveInactive, onUpdateHour, onToggleAimLaser, onToggleAimCryo } from "../uiManager/Thunks";
-import { UIReducerActions } from "../../enum";
+import { onSetWaveInactive, onUpdateHour, onCancelToggle, onUseReactor, onSavedColonist, onLostColonist, onPlaceDrone, onChargeReactor } from "../uiManager/Thunks";
+import { UIReducerActions, NIGHTFALL, DAYBREAK, WAVE_SIZE } from "../../enum";
 import { isFrostTile } from "../helpers/Util";
+import DroneSprite from "./DroneSprite";
 
 export default class WorldScene extends Scene {
 
@@ -15,6 +16,7 @@ export default class WorldScene extends Scene {
     map:Tilemaps.Tilemap
     deaths: GameObjects.Group
     colonistSprites: Array<ColonistSprite>
+    droneSprites: Array<DroneSprite>
     levelEntrance: Tuple
     levelExit: Tuple
     tileData: Array<Array<TileInfo>>
@@ -23,6 +25,7 @@ export default class WorldScene extends Scene {
         super(config)
         this.unsubscribeRedux = store.subscribe(this.onReduxUpdate)
         this.colonistSprites = []
+        this.droneSprites = []
     }
 
     preload = () =>
@@ -44,7 +47,7 @@ export default class WorldScene extends Scene {
                         callback: () => {
                             this.spawnColonist()
                         },
-                        repeat: 10,
+                        repeat: WAVE_SIZE,
                     })
                     this.time.addEvent({
                         delay:20000,
@@ -52,6 +55,14 @@ export default class WorldScene extends Scene {
                             onSetWaveInactive()
                         }
                     })
+                    break
+                case UIReducerActions.AIM_CRYO:
+                case UIReducerActions.AIM_LASER:
+                case UIReducerActions.START_PLACE_DRONE:
+                    this.updateSelectedIcon()
+                    break
+                case UIReducerActions.NO_CHARGE:
+                    this.showText(this.input.activePointer.worldX, this.input.activePointer.worldY, 'Reactor power low!')
                     break
             }
     }
@@ -85,24 +96,20 @@ export default class WorldScene extends Scene {
         this.cameras.main.centerOn(this.map.widthInPixels/2, this.map.heightInPixels/2)
 
         this.input.on('pointermove', (event) => {
-            let tile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined,'terrain')
-            if(tile){
-                let state = store.getState()
-                if(state.aimLaser)
-                    this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'laser')
-                else if(state.aimCryo)
-                    this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'cryo')
-                else if(this.selectIcon) this.selectIcon.setVisible(false)
-            }
+            this.updateSelectedIcon()
         })
         this.input.on('pointerdown', (event, gameObjects) => {
             let state = store.getState()
             if(state.aimLaser) this.fireLaser(this.selectIcon.getCenter())
             if(state.aimCryo) this.fireCryo(this.selectIcon.getCenter())
+            if(state.placingDrone) this.placeDrone(this.selectIcon.getCenter())
+        })
+        this.input.keyboard.on('keydown-ESC', (event) => {
+            onCancelToggle()
         })
 
         this.time.addEvent({
-            delay: 3000,
+            delay: 10000,
             callback: () => {
                 this.onHourTick()
             },
@@ -115,6 +122,27 @@ export default class WorldScene extends Scene {
             },
             repeat:-1
         })
+        this.time.addEvent({
+            delay: 3000,
+            callback: ()=>{
+                onChargeReactor()
+            },
+            repeat: -1
+        })
+    }
+
+    updateSelectedIcon = () => {
+        let tile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined,'terrain')
+        if(tile){
+            let state = store.getState()
+            if(state.aimLaser)
+                this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'laser')
+            else if(state.aimCryo)
+                this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'cryo')
+            else if(state.placingDrone)
+                this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'drone')
+            else if(this.selectIcon) this.selectIcon.setVisible(false)
+        }
     }
 
     fireLaser = (worldCoords:Tuple) => {
@@ -131,7 +159,7 @@ export default class WorldScene extends Scene {
             this.tileData[target.x][target.y].collides = false
         } 
         else if(target.index === TileIndexes.frost.frostTile) target.index = TileIndexes.frost.passable
-        onToggleAimLaser()
+        onUseReactor()
     }
 
     fireCryo = (worldCoords:Tuple) => {
@@ -144,14 +172,25 @@ export default class WorldScene extends Scene {
             target.setCollision(true)
             this.tileData[target.x][target.y].collides = true
         }
-        onToggleAimCryo()
+        onUseReactor()
+    }
+
+    placeDrone = (worldCoords:Tuple) => {
+        this.droneSprites.push(new DroneSprite(this, worldCoords.x, worldCoords.y))
+        onPlaceDrone()
     }
 
     onHourTick = () => {
         let hour = store.getState().hour
-        if(hour === 20) this.launchWave(true)
-        if(hour === 6) this.launchWave(false)
+        if(hour === NIGHTFALL) this.launchWave(true)
+        if(hour === DAYBREAK) this.launchWave(false)
         onUpdateHour((store.getState().hour+1) % 24)
+        this.map.forEachTile(tile=>{
+            if(Phaser.Math.Between(0,10)===10 && !tile.collides){
+                if(isFrostTile(tile.index)) tile.index = TileIndexes.frost.passable
+                else tile.index = TileIndexes.fire.passable
+            }
+        },undefined,undefined,undefined,undefined,undefined,undefined,'terrain')
     }
 
     checkColonists = () => {
@@ -159,15 +198,17 @@ export default class WorldScene extends Scene {
         this.colonistSprites.forEach((spr,i)=>{
             if(spr.health <= 0) {
                 this.deaths.get(spr.x, spr.y, 'bones')
-                spr.destroy()
                 indexes.push(i)
+                onLostColonist()
             }
         })
-        indexes.forEach(i=>this.colonistSprites.splice(i,1))
+        indexes.forEach(i=>{
+            this.colonistSprites.splice(i,1)[0].destroy()
+        })
     }
 
     launchWave = (isFrost:boolean) => {
-        let wave = this.add.tileSprite(0,32,32,this.map.heightInPixels*2, 'tiles', isFrost ? TileIndexes.frost.frostWave : TileIndexes.fire.fireWave).setDepth(2)
+        let wave = this.add.tileSprite(0,32,64,this.map.heightInPixels*2, 'tiles', isFrost ? TileIndexes.frost.frostWave : TileIndexes.fire.fireWave).setDepth(2)
         let rotator = this.time.addEvent({
             delay:200,
             repeat:-1,
@@ -184,20 +225,27 @@ export default class WorldScene extends Scene {
                 this.map.getTilesWithinShape(rect, undefined, undefined, 'terrain').forEach(tile=>{
                     if(isFrost){
                         if(tile.collides) tile.index = TileIndexes.frost.impassible
-                        else tile.index = TileIndexes.frost.passable
+                        else {
+                            if(Phaser.Math.Between(0,10)===10) tile.index = TileIndexes.frost.frostTile
+                            else tile.index = TileIndexes.frost.passable
+                        }
                     }
                     else {
                         if(tile.collides) tile.index = TileIndexes.fire.impassible
-                        else tile.index = TileIndexes.fire.passable
+                        else {
+                            if(Phaser.Math.Between(0,10)===10) tile.index = TileIndexes.fire.fireTile
+                            else tile.index = TileIndexes.fire.passable
+                        }
                     }
                 })
                 let bodies = this.physics.overlapRect(rect.x, rect.y, rect.width, rect.height)
                 for(var i=0;i<bodies.length;i++){
                     let spr = bodies[i].gameObject as ColonistSprite
                     this.deaths.get(spr.x, spr.y, 'bones')
-                    spr.destroy()
+                    let j = this.colonistSprites.findIndex(cspr=>cspr.id === spr.id)
+                    this.colonistSprites.splice(j,1)[0].destroy()
                 }
-                if(Phaser.Math.Between(0,10) === 10) this.triggerAvalanche()
+                if(Phaser.Math.Between(0,30) === 10) this.triggerAvalanche()
             },
             onComplete: () => {
                 rotator.remove()
@@ -213,18 +261,10 @@ export default class WorldScene extends Scene {
         shape.forEach(offset=>{
             let tile = this.map.getTileAt(shapeTilePos.x+offset.x, shapeTilePos.y+offset.y, false, 'terrain')
             if(tile){
-                if(Phaser.Math.Between(0,1)===1){
-                    if(isFrostTile(tile.index)) tile.index = TileIndexes.frost.debris
-                    else tile.index = TileIndexes.fire.debris
-                    tile.setCollision(true)
-                    this.tileData[tile.x][tile.y].collides = true
-                }
-                else {
-                    if(isFrostTile(tile.index)) tile.index = TileIndexes.frost.frostTile
-                    else tile.index = TileIndexes.fire.fireTile
-                    tile.setCollision(false)
-                    this.tileData[tile.x][tile.y].collides = false
-                }
+                if(isFrostTile(tile.index)) tile.index = TileIndexes.frost.debris
+                else tile.index = TileIndexes.fire.debris
+                tile.setCollision(true)
+                this.tileData[tile.x][tile.y].collides = true
             }
         })
     }
@@ -233,9 +273,8 @@ export default class WorldScene extends Scene {
         if(tile.index === TileIndexes.exit){
             console.log('yay')
             let i = this.colonistSprites.findIndex(spr=>spr.id === colonistSprite.id)
-            this.colonistSprites.splice(i,1)
-            colonistSprite.destroy()
-            //onColonistEscaped
+            this.colonistSprites.splice(i,1)[0].destroy()
+            onSavedColonist()
         }
     }
 
@@ -251,18 +290,20 @@ export default class WorldScene extends Scene {
     }
     
     spawnColonist = () => {
-        this.colonistSprites.push(new ColonistSprite(this, this.map.tileToWorldX(this.levelEntrance.x)+16, this.map.tileToWorldY(this.levelEntrance.y)+8, 'tiles', TileIndexes.colonist))
+        this.colonistSprites.push(new ColonistSprite(this, this.map.tileToWorldX(this.levelEntrance.x)+16, this.map.tileToWorldY(this.levelEntrance.y)+8))
     }
 
     setSelectIconPosition(tile:Tuple, texture:string){
         if(!this.selectIcon){
-            this.selectIcon = this.add.image(tile.x, tile.y, texture).setDepth(2).setScale(0.5)
+            this.selectIcon = this.add.image(tile.x, tile.y, texture).setDepth(2).setScale(0.8)
             this.add.tween({
                 targets: this.selectIcon,
-                scale: 1,
+                scale: 1.5,
                 duration: 1000,
                 repeat: -1,
-                yoyo: true
+                yoyo: true,
+                ease: 'Stepped',
+                easeParams:[3]
             })
         }
         else if(this.selectIcon.x !== tile.x || this.selectIcon.y !== tile.y) {
@@ -270,6 +311,27 @@ export default class WorldScene extends Scene {
             this.selectIcon.setPosition(tile.x, tile.y)
         }
         this.selectIcon.setVisible(true)
+    }
+
+    showText = (x:number, y:number, text:string) => {
+        let font = this.add.text(x-30, y, text,  {
+            fontFamily: 'Arcology',
+            fontSize: '12px',
+            color:'white'
+        })
+        font.setStroke('#000000', 2);
+        font.setWordWrapWidth(300)
+        font.setDepth(4)
+        this.add.tween({
+            targets: font,
+            ease: 'Stepped',
+            easeParams:[3],
+            duration: 1000,
+            alpha: 0,
+            onComplete: ()=>{
+                font.destroy()
+            }
+        })
     }
 
     update(time, delta){

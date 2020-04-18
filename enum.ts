@@ -4,9 +4,21 @@ export enum UIReducerActions {
     WAVE_SENT='wves',
     SET_HOUR='shr',
     AIM_CRYO='aim_c',
-    AIM_LASER='aim_l'
+    AIM_LASER='aim_l',
+    CANCEL='cans',
+    USE_REACTOR='ureact',
+    CHARGE_REACTOR='chrege',
+    SAVE_COLONIST='saved',
+    COLONIST_LOST='lost',
+    START_PLACE_DRONE='place',
+    PLACE_DRONE='pld',
+    NO_CHARGE='nchrg'
 }
 
 export enum Modal {
     HELP='halp'
 }
+
+export const NIGHTFALL=20
+export const DAYBREAK=6
+export const WAVE_SIZE=10

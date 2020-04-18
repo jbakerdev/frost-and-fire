@@ -19,7 +19,7 @@ export default class CanvasFrame extends React.Component {
 
     componentDidMount() {
         this.state.phaserInstance = new Phaser.Game({
-            type: Phaser.CANVAS,
+            type: Phaser.WEBGL,
             width: this.state.containerRef.current.clientWidth,
             height: this.state.containerRef.current.clientHeight,
             parent: 'canvasEl',

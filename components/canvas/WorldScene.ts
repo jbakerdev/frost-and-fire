@@ -62,6 +62,8 @@ export default class WorldScene extends Scene {
         this.map = this.make.tilemap({ key: 'map'})
         let tileset = this.map.addTilesetImage('tiles', 'tilemap')
         let terrain = this.map.createDynamicLayer('terrain', tileset).setCollisionByExclusion(PassableIndexes)
+        this.physics.world.setBounds(0,0,this.map.widthInPixels, this.map.heightInPixels)
+        this.physics.world.setBoundsCollision()
         this.physics.add.collider(this.colonistSprites, terrain)
         this.physics.add.overlap(this.colonistSprites, terrain, this.colonistOverTile)
         let doodads = this.map.createStaticLayer('doodads', tileset)
@@ -106,6 +108,13 @@ export default class WorldScene extends Scene {
             },
             repeat: -1
         })
+        this.time.addEvent({
+            delay:500,
+            callback: ()=>{
+                this.checkColonists()
+            },
+            repeat:-1
+        })
     }
 
     fireLaser = (worldCoords:Tuple) => {
@@ -143,12 +152,18 @@ export default class WorldScene extends Scene {
         if(hour === 20) this.launchWave(true)
         if(hour === 6) this.launchWave(false)
         onUpdateHour((store.getState().hour+1) % 24)
-        this.colonistSprites.forEach(spr=>{
+    }
+
+    checkColonists = () => {
+        let indexes = []
+        this.colonistSprites.forEach((spr,i)=>{
             if(spr.health <= 0) {
                 this.deaths.get(spr.x, spr.y, 'bones')
                 spr.destroy()
+                indexes.push(i)
             }
         })
+        indexes.forEach(i=>this.colonistSprites.splice(i,1))
     }
 
     launchWave = (isFrost:boolean) => {
@@ -207,6 +222,8 @@ export default class WorldScene extends Scene {
                 else {
                     if(isFrostTile(tile.index)) tile.index = TileIndexes.frost.frostTile
                     else tile.index = TileIndexes.fire.fireTile
+                    tile.setCollision(false)
+                    this.tileData[tile.x][tile.y].collides = false
                 }
             }
         })
@@ -215,7 +232,8 @@ export default class WorldScene extends Scene {
     colonistHitFeature = (colonistSprite:any, tile:any) => {
         if(tile.index === TileIndexes.exit){
             console.log('yay')
-            this.colonistSprites = this.colonistSprites.filter(spr=>spr.id !== colonistSprite.id)
+            let i = this.colonistSprites.findIndex(spr=>spr.id === colonistSprite.id)
+            this.colonistSprites.splice(i,1)
             colonistSprite.destroy()
             //onColonistEscaped
         }

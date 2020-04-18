@@ -6,7 +6,7 @@ import AStar from './AStar';
 import { TileIndexes } from '../../assets/Assets';
 
 export const SearchDirs = [
-    {x:1,y:0},{x:0,y:1},{x:0,y:-1},{x:-1,y:0}
+    {x:1,y:0},{x:0,y:1},{x:0,y:-1}
 ]
 
 export const runSpriteFOV = (sprite:GameObjects.Sprite, tileData:Array<Array<TileInfo>>, map:Tilemaps.Tilemap, getAllTilesAt:Function) => {
@@ -52,4 +52,16 @@ export const moveTowardXY = (currentSprite:Physics.Arcade.Sprite, x:number, y:nu
 
 export const isFrostTile = (index:number) => {
     return index === TileIndexes.frost.debris||index === TileIndexes.frost.frostTile||index === TileIndexes.frost.frostWave||index === TileIndexes.frost.impassible||index === TileIndexes.frost.passable
+}
+
+export const shuffle = (array:Array<any>) => {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+    return array;
 }

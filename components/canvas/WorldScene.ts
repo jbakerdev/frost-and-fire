@@ -232,12 +232,6 @@ export default class WorldScene extends Scene {
             this.flashText(hour === NIGHTFALL-1 ? 'NIGHT IS APPROACHING' : 'DAWN IS APPROACHING')
         }
         onUpdateHour((store.getState().hour+1) % 24)
-        this.map.forEachTile(tile=>{
-            if(Phaser.Math.Between(0,10)===10 && !tile.collides){
-                if(isFrostTile(tile.index)) tile.index = TileIndexes.frost.passable
-                else tile.index = TileIndexes.fire.passable
-            }
-        },undefined,undefined,undefined,undefined,undefined,undefined,'terrain')
     }
 
     checkColonists = () => {
@@ -394,7 +388,7 @@ export default class WorldScene extends Scene {
         this.add.tween({
             targets: font,
             ease: 'Stepped',
-            easeParams:[2],
+            easeParams:[3],
             duration: 500,
             alpha: 0,
             yoyo:true,

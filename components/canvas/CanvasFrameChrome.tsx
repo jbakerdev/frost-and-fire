@@ -105,7 +105,7 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
 
 const getTimeText = (hour:number) => {
     if(hour > NIGHTFALL || hour < DAYBREAK) return 'Night'
-    if(hour === NIGHTFALL || hour === NIGHTFALL-1) return 'Night is approaching'
-    if(hour === DAYBREAK || hour === DAYBREAK-1) return 'Dawn is approaching'
+    if(hour === NIGHTFALL || hour === NIGHTFALL-1) return 'Dusk'
+    if(hour === DAYBREAK || hour === DAYBREAK-1) return 'Dawn'
     if(hour > DAYBREAK) return 'Daylight'
 }

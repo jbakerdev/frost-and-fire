@@ -39,7 +39,7 @@ place various kinds of healing towers to keep your people alive as they navigate
 	-modification tower grants resistance to one damage type and vulnerability to another
 	-resurrection tower, periodically bring back a dead unit in radius
 		
-radiation intesifies each round
+radiation intesifies each round, and the ground damage type shift from frost to fire (lava is 5am-11pm / frost is 11pm-5am)
 random events increase in frequency
 different damage types: frost/fire
 different people types: child/old/young - health/speed trade off - child is low health high speed - young is balanced - old is low on both
@@ -47,3 +47,26 @@ the people age as they walk unless protected in some way
 
 knowledge resource generated when someone gets through to the ship (optimize a tower, place a new type, etc)
 win if you save enough people to man the ship and gain enough knowledge
+
+
+ship crew member unlocks / abilties:
+trigger colonist wave (default, best weather between 5-6am and 12-1am)
+laser drill (default, make 1 block passable, change 1 frost block to normal, or a normal block to lava)
+cryo launcher (default, change 1 passable block into an impassible frost block, or change 1 lava block to a normal block)
++more reactor charges can be stored (ship's reactor charges starts max 2 per round (1 emrg overcharge allowed), +1 per 5 crew rescued)
+stretch goals:
+--healing drone, targets lowest health unit with a moderate heal (default, upgrades on speed, radius, range available per 5 crew)
+--grav drone, floats colonists slowly over damaging tiles in radius (20 crew rescued)
+
+colonists always take the shortest path, and run screaming if there is no path
+
+round changes:
+    lava flow: a plus shape of tiles becomes lava
+    glacial freeze: a plus shape of tiles becomes frost
+    avalanche: one random tile becomes impassible
+    entrance may also move, or a new entrance added
+
+tile types:
+    lava/frost/normal
+    passable/impassible
+    cave entrance/ship exit

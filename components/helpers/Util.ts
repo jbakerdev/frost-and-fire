@@ -2,6 +2,7 @@ import * as v4 from 'uuid'
 import { GameObjects, Tilemaps, Physics } from 'phaser';
 import { store } from '../../App';
 import { compute, _getCircle } from './Fov';
+import AStar from './AStar';
 
 export const runSpriteFOV = (sprite:GameObjects.Sprite, tileData:Array<Array<TileInfo>>, map:Tilemaps.Tilemap, getAllTilesAt:Function) => {
     let sight = 3

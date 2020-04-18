@@ -80,6 +80,7 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
     }
 
     heal = (amount:number) => {
+        this.scene.sounds.heal.play()
         this.health+=amount
         this.setTintFill(0x00ff00)
         this.scene.tweens.addCounter({

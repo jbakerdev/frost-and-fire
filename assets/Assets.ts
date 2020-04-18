@@ -1,5 +1,12 @@
 export const defaults = [
-    // { key: 'destroyed', resource: require('./audio/destroyed.mp3'), type: 'audio' },
+    { key: 'alarm', resource: require('./audio/alarm.mp3'), type: 'audio' },
+    { key: 'cryo', resource: require('./audio/cryo.mp3'), type: 'audio' },
+    { key: 'drone', resource: require('./audio/drone.mp3'), type: 'audio' },
+    { key: 'heal', resource: require('./audio/heal.mp3'), type: 'audio' },
+    { key: 'laser', resource: require('./audio/laser.mp3'), type: 'audio' },
+    { key: 'rock', resource: require('./audio/rock.mp3'), type: 'audio' },
+    { key: 'start', resource: require('./audio/start.mp3'), type: 'audio' },
+    { key: 'wave', resource: require('./audio/wave.mp3'), type: 'audio' },
     { key: 'bones', resource: require('./icon/bones.png'), type: 'image'},
     { key: 'cryo', resource: require('./icon/cryo.png'), type: 'image'},
     { key: 'laser', resource: require('./icon/laser.png'), type: 'image'},

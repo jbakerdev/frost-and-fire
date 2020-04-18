@@ -1,4 +1,4 @@
-import { Scene, GameObjects, Tilemaps, Geom, Physics } from "phaser";
+import { Scene, GameObjects, Tilemaps, Geom, Physics, Sound } from "phaser";
 import { store } from "../../App";
 import { defaults, TileIndexes, PassableIndexes, DebrisShapes } from '../../assets/Assets'
 import { _getCircle } from "../helpers/Fov";
@@ -8,6 +8,17 @@ import { onSetWaveInactive, onUpdateHour, onCancelToggle, onUseReactor, onSavedC
 import { UIReducerActions, NIGHTFALL, DAYBREAK, WAVE_SIZE } from "../../enum";
 import { isFrostTile } from "../helpers/Util";
 import DroneSprite from "./DroneSprite";
+
+interface Sounds {
+    alarm: Sound.BaseSound
+    cryo: Sound.BaseSound
+    drone: Sound.BaseSound
+    heal: Sound.BaseSound
+    laser: Sound.BaseSound
+    rock: Sound.BaseSound
+    start: Sound.BaseSound
+    wave: Sound.BaseSound
+}
 
 export default class WorldScene extends Scene {
 
@@ -20,6 +31,8 @@ export default class WorldScene extends Scene {
     levelEntrance: Tuple
     levelExit: Tuple
     tileData: Array<Array<TileInfo>>
+    sounds: Sounds
+    chooseDronePosition?: DroneSprite
 
     constructor(config){
         super(config)
@@ -55,6 +68,7 @@ export default class WorldScene extends Scene {
                             onSetWaveInactive()
                         }
                     })
+                    this.sounds.start.play()
                     break
                 case UIReducerActions.AIM_CRYO:
                 case UIReducerActions.AIM_LASER:
@@ -69,6 +83,16 @@ export default class WorldScene extends Scene {
 
     create = () =>
     {
+        this.sounds = {
+            alarm: this.sound.add('alarm'),
+            cryo: this.sound.add('cryo'),
+            drone: this.sound.add('drone'),
+            heal: this.sound.add('heal'),
+            laser: this.sound.add('laser'),
+            rock: this.sound.add('rock'),
+            start: this.sound.add('start'),
+            wave: this.sound.add('wave')
+        }
         this.deaths = this.add.group()
         this.map = this.make.tilemap({ key: 'map'})
         let tileset = this.map.addTilesetImage('tiles', 'tilemap')
@@ -103,9 +127,19 @@ export default class WorldScene extends Scene {
             if(state.aimLaser) this.fireLaser(this.selectIcon.getCenter())
             if(state.aimCryo) this.fireCryo(this.selectIcon.getCenter())
             if(state.placingDrone) this.placeDrone(this.selectIcon.getCenter())
+            if(this.chooseDronePosition){
+                this.chooseDronePosition.move(this.input.activePointer.worldX, this.input.activePointer.worldY)
+                this.chooseDronePosition = null
+                this.selectIcon.setVisible(false)
+            } 
+            if(gameObjects[0]){
+                if(!this.chooseDronePosition) this.chooseDronePosition = gameObjects[0]
+            } 
         })
         this.input.keyboard.on('keydown-ESC', (event) => {
             onCancelToggle()
+            this.chooseDronePosition = null
+            this.selectIcon.setVisible(false)
         })
 
         this.time.addEvent({
@@ -139,7 +173,7 @@ export default class WorldScene extends Scene {
                 this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'laser')
             else if(state.aimCryo)
                 this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'cryo')
-            else if(state.placingDrone)
+            else if(state.placingDrone || this.chooseDronePosition)
                 this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'drone')
             else if(this.selectIcon) this.selectIcon.setVisible(false)
         }
@@ -159,6 +193,7 @@ export default class WorldScene extends Scene {
             this.tileData[target.x][target.y].collides = false
         } 
         else if(target.index === TileIndexes.frost.frostTile) target.index = TileIndexes.frost.passable
+        this.sounds.laser.play()
         onUseReactor()
     }
 
@@ -172,11 +207,13 @@ export default class WorldScene extends Scene {
             target.setCollision(true)
             this.tileData[target.x][target.y].collides = true
         }
+        this.sounds.cryo.play()
         onUseReactor()
     }
 
     placeDrone = (worldCoords:Tuple) => {
         this.droneSprites.push(new DroneSprite(this, worldCoords.x, worldCoords.y))
+        this.sounds.drone.play()
         onPlaceDrone()
     }
 
@@ -184,6 +221,16 @@ export default class WorldScene extends Scene {
         let hour = store.getState().hour
         if(hour === NIGHTFALL) this.launchWave(true)
         if(hour === DAYBREAK) this.launchWave(false)
+        if(hour === NIGHTFALL-1 || hour === DAYBREAK-1) {
+            this.time.addEvent({
+                delay: 1000,
+                callback: ()=>{
+                    this.sounds.alarm.play()
+                },
+                repeat: 5
+            })
+            this.flashText(hour === NIGHTFALL-1 ? 'NIGHT IS APPROACHING' : 'DAWN IS APPROACHING')
+        }
         onUpdateHour((store.getState().hour+1) % 24)
         this.map.forEachTile(tile=>{
             if(Phaser.Math.Between(0,10)===10 && !tile.collides){
@@ -216,6 +263,7 @@ export default class WorldScene extends Scene {
                 wave.tilePositionX-=5
             }
         })
+        this.sounds.wave.play({volume:0.3})
         this.tweens.add({
             targets: wave,
             x: this.map.widthInPixels,
@@ -258,6 +306,7 @@ export default class WorldScene extends Scene {
         let shape = DebrisShapes[Phaser.Math.Between(0,DebrisShapes.length-1)]
         let shapeTilePos = {x: Phaser.Math.Between(0,this.map.width), y: Phaser.Math.Between(0, this.map.height)}
         this.cameras.main.shake(200, 0.001)
+        this.sounds.rock.play()
         shape.forEach(offset=>{
             let tile = this.map.getTileAt(shapeTilePos.x+offset.x, shapeTilePos.y+offset.y, false, 'terrain')
             if(tile){
@@ -328,6 +377,28 @@ export default class WorldScene extends Scene {
             easeParams:[3],
             duration: 1000,
             alpha: 0,
+            onComplete: ()=>{
+                font.destroy()
+            }
+        })
+    }
+
+    flashText = (text:string) => {
+        let font = this.add.text(100, this.map.heightInPixels/2, text,  {
+            fontFamily: 'Arcology',
+            fontSize: '12px',
+            color:'red'
+        })
+        font.setStroke('#ffffff', 2);
+        font.setDepth(4)
+        this.add.tween({
+            targets: font,
+            ease: 'Stepped',
+            easeParams:[2],
+            duration: 500,
+            alpha: 0,
+            yoyo:true,
+            repeat: 4,
             onComplete: ()=>{
                 font.destroy()
             }

@@ -94,7 +94,7 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
                             Icon(Icons.cryo, ''), 
                             'A cryo beam. Places one obstruction or removes fire. Requires 5 or more crew to operate.')}</div>
                     <div style={{marginRight:'1em', display:'flex', alignItems:'center'}}>
-                        3: {Button(!this.props.placingDrone && this.props.crew >= 3 && this.props.reactorCharges > 0, onStartPlaceDrone, 
+                        3: {Button(!this.props.placingDrone , onStartPlaceDrone, 
                             Icon(Icons.drone, ''), 
                             'A drone that heals colonists near it. Each one requires 3 crew to operate.')}</div>
                 </div>

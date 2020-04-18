@@ -2,7 +2,9 @@ declare enum UIReducerActions {
     NEW_SESSION='newsesh',
     START_WAVE='swve',
     WAVE_SENT='wves',
-    SET_HOUR='shr'
+    SET_HOUR='shr',
+    AIM_CRYO='aim_c',
+    AIM_LASER='aim_l'
 }
 
 declare enum Modal {
@@ -33,4 +35,6 @@ interface RState {
     engineEvent: UIReducerActions
     activeWave: boolean
     hour: number
+    aimLaser: boolean
+    aimCryo: boolean
 }

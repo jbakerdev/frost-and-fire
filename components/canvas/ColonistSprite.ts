@@ -17,7 +17,9 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
         scene.add.existing(this)
         scene.physics.add.existing(this)
         this.setDepth(1)
-        this.speed = 50
+        this.speed = Phaser.Math.Between(25,50)
+        this.health = Phaser.Math.Between(5,20)
+        this.setScale(this.getScale())
         this.id = v4()
         this.timer = scene.time.addEvent({
             delay: 500,
@@ -26,6 +28,12 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
             },
             repeat:-1
         })
+    }
+
+    getScale = () => {
+        if(this.speed >= 40 && this.health<15) return 0.5
+        if(this.speed < 40 && this.health<15) return 0.8
+        return 1
     }
 
     step = () => {

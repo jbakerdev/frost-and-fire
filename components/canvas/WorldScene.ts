@@ -4,7 +4,7 @@ import { defaults, TileIndexes, PassableIndexes } from '../../assets/Assets'
 import { _getCircle } from "../helpers/Fov";
 import ColonistSprite from "./ColonistSprite";
 import AStar from "../helpers/AStar";
-import { onSetWaveInactive, onUpdateHour } from "../uiManager/Thunks";
+import { onSetWaveInactive, onUpdateHour, onToggleAimLaser, onToggleAimCryo } from "../uiManager/Thunks";
 import { UIReducerActions } from "../../enum";
 
 export default class WorldScene extends Scene {
@@ -80,6 +80,23 @@ export default class WorldScene extends Scene {
         this.cameras.main.setZoom(2)
         this.cameras.main.centerOn(this.map.widthInPixels/2, this.map.heightInPixels/2)
 
+        this.input.on('pointermove', (event) => {
+            let tile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined,'terrain')
+            if(tile){
+                let state = store.getState()
+                if(state.aimLaser)
+                    this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'laser')
+                else if(state.aimCryo)
+                    this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'cryo')
+                else if(this.selectIcon) this.selectIcon.setVisible(false)
+            }
+        })
+        this.input.on('pointerdown', (event, gameObjects) => {
+            let state = store.getState()
+            if(state.aimLaser) this.fireLaser(this.selectIcon.getCenter())
+            if(state.aimCryo) this.fireCryo(this.selectIcon.getCenter())
+        })
+
         this.time.addEvent({
             delay: 1000,
             callback: () => {
@@ -87,6 +104,36 @@ export default class WorldScene extends Scene {
             },
             repeat: -1
         })
+    }
+
+    fireLaser = (worldCoords:Tuple) => {
+        let target = this.map.getTileAtWorldXY(worldCoords.x, worldCoords.y, true, undefined, 'terrain')
+        this.cameras.main.flash(200,200,0,0)
+        if(target.index === TileIndexes.frost.impassible){
+            target.index = TileIndexes.frost.passable
+            target.setCollision(false)
+            this.tileData[target.x][target.y].collides = false
+        } 
+        else if(target.index === TileIndexes.fire.impassible){
+            target.index = TileIndexes.fire.passable
+            target.setCollision(false)
+            this.tileData[target.x][target.y].collides = false
+        } 
+        else if(target.index === TileIndexes.frost.frostTile) target.index = TileIndexes.frost.passable
+        onToggleAimLaser()
+    }
+
+    fireCryo = (worldCoords:Tuple) => {
+        let target = this.map.getTileAtWorldXY(worldCoords.x, worldCoords.y, true, undefined, 'terrain')
+        this.cameras.main.flash(200,0,0,200)
+        if(target.index === TileIndexes.fire.fireTile) 
+            target.index = TileIndexes.fire.passable
+        else if(target.index === TileIndexes.fire.passable || target.index === TileIndexes.frost.passable) {
+            target.index = TileIndexes.frost.impassible
+            target.setCollision(true)
+            this.tileData[target.x][target.y].collides = true
+        }
+        onToggleAimCryo()
     }
 
     onHourTick = () => {
@@ -153,9 +200,9 @@ export default class WorldScene extends Scene {
         this.colonistSprites.push(new ColonistSprite(this, this.map.tileToWorldX(this.levelEntrance.x)+16, this.map.tileToWorldY(this.levelEntrance.y)+8, 'tiles', TileIndexes.colonist))
     }
 
-    setSelectIconPosition(tile:Tuple){
+    setSelectIconPosition(tile:Tuple, texture:string){
         if(!this.selectIcon){
-            this.selectIcon = this.add.image(tile.x, tile.y, 'selected').setDepth(2).setScale(0.5)
+            this.selectIcon = this.add.image(tile.x, tile.y, texture).setDepth(2).setScale(0.5)
             this.add.tween({
                 targets: this.selectIcon,
                 scale: 1,
@@ -164,9 +211,10 @@ export default class WorldScene extends Scene {
                 yoyo: true
             })
         }
-        else if(this.selectIcon.x !== tile.x || this.selectIcon.y !== tile.y) 
+        else if(this.selectIcon.x !== tile.x || this.selectIcon.y !== tile.y) {
+            this.selectIcon.setTexture(texture)
             this.selectIcon.setPosition(tile.x, tile.y)
-        
+        }
         this.selectIcon.setVisible(true)
     }
 

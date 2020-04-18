@@ -1,5 +1,5 @@
-import { dispatch, store } from '../../App'
-import { UIReducerActions, Modal } from '../../enum'
+import { dispatch } from '../../App'
+import { UIReducerActions } from '../../enum'
 
 export const onInitSession = () => {
     dispatch({ type: UIReducerActions.NEW_SESSION })
@@ -15,4 +15,12 @@ export const onSetWaveInactive = () => {
 
 export const onUpdateHour = (hour:number) => {
     dispatch({ type: UIReducerActions.SET_HOUR, hour })
+}
+
+export const onToggleAimLaser = () => {
+    dispatch({ type: UIReducerActions.AIM_LASER })
+}
+
+export const onToggleAimCryo = () => {
+    dispatch({ type: UIReducerActions.AIM_CRYO })
 }

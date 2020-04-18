@@ -11,6 +11,10 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, activeWave: false, engineEvent:null}
         case UIReducerActions.SET_HOUR:
             return { ...state, hour: action.hour, engineEvent:null}
+        case UIReducerActions.AIM_CRYO:
+            return { ...state, aimCryo: !state.aimCryo, engineEvent: null }
+        case UIReducerActions.AIM_LASER:
+            return { ...state, aimLaser: !state.aimLaser, engineEvent: null}
         default:
             return state
     }
@@ -23,6 +27,8 @@ const getInitialState = ():RState => {
         modal: null,
         activeWave: false,
         engineEvent: null,
-        hour: 18
+        hour: 18,
+        aimLaser: false,
+        aimCryo: false
     }
 }

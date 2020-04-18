@@ -1,6 +1,8 @@
 export const defaults = [
     // { key: 'destroyed', resource: require('./audio/destroyed.mp3'), type: 'audio' },
     { key: 'bones', resource: require('./icon/bones.png'), type: 'image'},
+    { key: 'cryo', resource: require('./icon/cryo.png'), type: 'image'},
+    { key: 'laser', resource: require('./icon/laser.png'), type: 'image'},
     { key: 'tilemap', resource: require('./tiles.png'), type: 'image'},
     { key: 'map', resource: require('./map.json'), type: 'tilemapTiledJSON', data: {}},
     { key: 'tiles', resource: require('./tiles.png'), type: 'spritesheet', data: { frameWidth: 16, frameHeight: 16 }},
@@ -28,5 +30,7 @@ export const TileIndexes = {
 }
 
 export const Icons = {
-    sun_moon: require('./icon/sun_moon.png')
+    sun_moon: require('./icon/sun_moon.png'),
+    laser: require('./icon/laser.png'),
+    cryo: require('./icon/cryo.png')
 }

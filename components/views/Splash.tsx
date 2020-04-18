@@ -1,7 +1,7 @@
 import * as React from 'react';
 import AppStyles from '../../AppStyles';
 import { TopBar } from '../helpers/Shared'
-import CanvasFrame from '../canvas/CanvasFrameChrome';
+import CanvasFrameChrome from '../canvas/CanvasFrameChrome';
 const boot = require('../../assets/audio/chime.mp3')
 
 export default class Splash extends React.Component {
@@ -16,7 +16,7 @@ export default class Splash extends React.Component {
 
     render(){
         return this.state.transitionState === 3 ? 
-         <CanvasFrame /> : (
+         <CanvasFrameChrome /> : (
         <div>
             <div style={{opacity: this.state.transitionState === 1 ? 1:0, transition:'opacity 1s', width:'25em'}}>
                 <img style={{width:'-webkit-fill-available'}} src={require('../../assets/Cryptomnesic2.png')}/>

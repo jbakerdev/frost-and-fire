@@ -5,6 +5,10 @@ const appReducer = (state = getInitialState(), action:any):RState => {
     switch (action.type) {
         case UIReducerActions.NEW_SESSION:
             return getInitialState()
+        case UIReducerActions.START_WAVE:
+            return { ...state, activeWave: true, engineEvent: UIReducerActions.START_WAVE }
+        case UIReducerActions.WAVE_SENT:
+            return { ...state, activeWave: false, engineEvent:null}
         default:
             return state
     }
@@ -15,6 +19,7 @@ export default appReducer;
 const getInitialState = ():RState => {
     return {
         modal: null,
+        activeWave: false,
         engineEvent: null
     }
 }

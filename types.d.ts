@@ -1,5 +1,7 @@
 declare enum UIReducerActions { 
-    NEW_SESSION='newsesh'
+    NEW_SESSION='newsesh',
+    START_WAVE='swve',
+    WAVE_SENT='wves'
 }
 
 declare enum Modal {
@@ -28,4 +30,5 @@ interface TileInfo {
 interface RState {
     modal: Modal
     engineEvent: UIReducerActions
+    activeWave: boolean
 }

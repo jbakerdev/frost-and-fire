@@ -30,7 +30,7 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
 
     step = () => {
         let path = this.scene.getPathArray({x:this.getCenter().x, y:this.getCenter().y})
-        if(path[0]){
+        if(path && path[0]){
             const targetTile = this.scene.map.getTileAt(path[0].x, path[0].y, false, 'terrain')
             moveTowardXY(this, targetTile.getCenterX(),targetTile.getCenterY(), this.speed)
         }

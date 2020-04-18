@@ -4,11 +4,15 @@ import { defaults, TileIndexes, PassableIndexes } from '../../assets/Assets'
 import { _getCircle } from "../helpers/Fov";
 import ColonistSprite from "./ColonistSprite";
 import AStar from "../helpers/AStar";
+import { onSetWaveInactive } from "../uiManager/Thunks";
+import { UIReducerActions } from "../../enum";
 
 export default class WorldScene extends Scene {
 
     unsubscribeRedux: Function
+    selectIcon: GameObjects.Image
     map:Tilemaps.Tilemap
+    deaths: GameObjects.Group
     colonistSprites: Array<ColonistSprite>
     levelEntrance: Tuple
     levelExit: Tuple
@@ -29,17 +33,31 @@ export default class WorldScene extends Scene {
     }
     
     onReduxUpdate = () => {
-        // const uiState = store.getState()
-        // let engineEvent = uiState.engineEvent
-        //if(engineEvent)
-            // switch(engineEvent){
-            //     case UIReducerActions.WHATEV:
-            //         break
-            // }
+        const uiState = store.getState()
+        let engineEvent = uiState.engineEvent
+        if(engineEvent)
+            switch(engineEvent){
+                case UIReducerActions.START_WAVE:
+                    this.time.addEvent({
+                        delay: 2000,
+                        callback: () => {
+                            this.spawnColonist()
+                        },
+                        repeat: 10,
+                    })
+                    this.time.addEvent({
+                        delay:20000,
+                        callback: ()=> {
+                            onSetWaveInactive()
+                        }
+                    })
+                    break
+            }
     }
 
     create = () =>
     {
+        this.deaths = this.add.group()
         this.map = this.make.tilemap({ key: 'map'})
         let tileset = this.map.addTilesetImage('tiles', 'tilemap')
         let terrain = this.map.createDynamicLayer('terrain', tileset).setCollisionByExclusion(PassableIndexes)
@@ -59,13 +77,8 @@ export default class WorldScene extends Scene {
                 transparent: PassableIndexes.findIndex(i=>i===tile.index)!==-1,
             }
         })
-        this.time.addEvent({
-            delay: 2000,
-            callback: () => {
-                this.spawnColonist()
-            },
-            repeat: 1
-        })
+        this.cameras.main.setZoom(2)
+        this.cameras.main.centerOn(this.map.widthInPixels/2, this.map.heightInPixels/2)
     }
 
     colonistHitFeature = (colonistSprite:any, tile:any) => {
@@ -86,7 +99,24 @@ export default class WorldScene extends Scene {
         this.colonistSprites.push(new ColonistSprite(this, this.map.tileToWorldX(this.levelEntrance.x)+16, this.map.tileToWorldY(this.levelEntrance.y)+8, 'tiles', TileIndexes.colonist))
     }
 
-    update(){
+    setSelectIconPosition(tile:Tuple){
+        if(!this.selectIcon){
+            this.selectIcon = this.add.image(tile.x, tile.y, 'selected').setDepth(2).setScale(0.5)
+            this.add.tween({
+                targets: this.selectIcon,
+                scale: 1,
+                duration: 1000,
+                repeat: -1,
+                yoyo: true
+            })
+        }
+        else if(this.selectIcon.x !== tile.x || this.selectIcon.y !== tile.y) 
+            this.selectIcon.setPosition(tile.x, tile.y)
+        
+        this.selectIcon.setVisible(true)
+    }
 
+    update(time, delta){
+        // this.controls.update(delta)
     }
 }

@@ -3,6 +3,7 @@ import AppStyles, { colors } from '../../AppStyles'
 import Splash from '../views/Splash';
 import { Modal } from '../../enum';
 import CanvasFrame from '../canvas/CanvasFrame';
+import CanvasFrameChrome from '../canvas/CanvasFrameChrome';
 
 interface Props {
     modal:Modal
@@ -13,7 +14,7 @@ export default class UIManager extends React.Component<Props> {
     render(){
         return (
             <div style={styles.frame}>
-                <CanvasFrame />
+                <CanvasFrameChrome />
                 {/* <Splash/> */}
             </div>
         )

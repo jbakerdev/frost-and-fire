@@ -1,14 +1,12 @@
 import * as React from 'react';
 import AppStyles, { colors } from '../../AppStyles';
 import { ButtonStrip, Select, Button, Icon } from '../helpers/Shared'
-import { onInitSession } from '../uiManager/Thunks';
-import { Modal } from '../../enum';
-import Help from '../views/Help';
-import Viewscreen from './CanvasFrame';
+import { onStartWave } from '../uiManager/Thunks';
 import { connect } from 'react-redux';
+import CanvasFrame from './CanvasFrame';
 
 interface Props {
-    
+    activeWave?:boolean
 }
 
 interface State {
@@ -16,7 +14,7 @@ interface State {
 }
 
 @(connect((state: RState) => ({
-    
+    activeWave: state.activeWave
 })) as any)
 export default class CanvasFrameChrome extends React.Component<Props, State> {
 
@@ -36,8 +34,11 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
 
     render(){
         return (
-            <div style={{position:'relative', padding:'17px'}}>
-                <Viewscreen />
+            <div style={{position:'relative'}}>
+                <CanvasFrame />
+                <div style={{position:'absolute', bottom:0, left:0}}>
+                    {Button(!this.props.activeWave, onStartWave, 'Go')}
+                </div>
             </div>
         )
     }

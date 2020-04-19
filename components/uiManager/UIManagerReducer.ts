@@ -5,7 +5,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
     state.engineEvent = null
     switch (action.type) {
         case UIReducerActions.NEW_SESSION:
-            return { ...state, engineEvent: UIReducerActions.NEW_SESSION, modal:null }
+            return { ...getInitialState(), engineEvent: UIReducerActions.NEW_SESSION, modal:null }
         case UIReducerActions.START_WAVE:
             return { ...state, activeWave: true, engineEvent: UIReducerActions.START_WAVE, colonistsRemaining: state.colonistsRemaining-WAVE_SIZE }
         case UIReducerActions.WAVE_SENT:

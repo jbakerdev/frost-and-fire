@@ -3,7 +3,7 @@ import { store } from "../../App";
 import { defaults, TileIndexes, PassableIndexes, DebrisShapes } from '../../assets/Assets'
 import ColonistSprite from "./ColonistSprite";
 import AStar from "../helpers/AStar";
-import { onSetWaveInactive, onUpdateHour, onCancelToggle, onUseReactor, onSavedColonist, onLostColonist, onPlaceDrone, onChargeReactor } from "../uiManager/Thunks";
+import { onSetWaveInactive, onUpdateHour, onCancelToggle, onUseReactor, onSavedColonist, onLostColonist, onPlaceDrone, onChargeReactor, onStartWave } from "../uiManager/Thunks";
 import { UIReducerActions, NIGHTFALL, DAYBREAK, WAVE_SIZE } from "../../enum";
 import { isFrostTile } from "../helpers/Util";
 import DroneSprite from "./DroneSprite";
@@ -80,6 +80,8 @@ export default class WorldScene extends Scene {
                     this.showText(this.input.activePointer.worldX, this.input.activePointer.worldY, 'Reactor power low!')
                     break
                 case UIReducerActions.NEW_SESSION:
+                    this.colonistSprites.forEach(spr=>spr.destroy())
+                    this.colonistSprites.slice(0,this.colonistSprites.length-1)
                     this.startTimers()
                     break
             }
@@ -171,6 +173,8 @@ export default class WorldScene extends Scene {
             frameRate: 4,
             repeat: -1
         })
+
+        onStartWave()
     }
 
     startTimers = () => {

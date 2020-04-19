@@ -38,7 +38,9 @@ export default class DroneSprite extends GameObjects.Sprite {
             duration:1000,
             y: this.y+5,
             yoyo: true,
-            repeat:-1
+            repeat:-1,
+            ease:'Stepped',
+            easeParams:[3]
         })
     }
 
@@ -68,7 +70,9 @@ export default class DroneSprite extends GameObjects.Sprite {
                     duration:1000,
                     y: this.y+5,
                     yoyo: true,
-                    repeat:-1
+                    repeat:-1,
+                    ease:'Stepped',
+                    easeParams:[3]
                 })
             }
         })

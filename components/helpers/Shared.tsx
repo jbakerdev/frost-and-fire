@@ -96,10 +96,10 @@ export const ProgressBar = (value:number, max:number, tooltip?:string) =>
         </div>
     </Tooltip>
 
-export const VerticalProgressBar = (value:number, max:number, tooltip?:string) => 
+export const VerticalProgressBar = (value:number, max:number, tooltip?:string, color?:string) => 
     <Tooltip placement="bottom" trigger={tooltip ? ['hover'] : []} overlay={<h6>{tooltip}</h6>}>
         <div style={{width:'100%', height:'100%', background:'transparent', display:'flex', alignItems:'flex-end'}}>
-            <div style={{background:'#ff5555', height:Math.round((value/max)*100)+'%', width:'100%'}}/>
+            <div style={{background: color? color :'#ff5555', height:Math.round((value/max)*100)+'%', width:'100%'}}/>
         </div>
     </Tooltip>
 

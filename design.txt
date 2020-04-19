@@ -74,3 +74,4 @@ tile types:
 
 playtest damage zone density curve increase per day cycle
 possibly add cleaning drone
+make cryo beam more useful

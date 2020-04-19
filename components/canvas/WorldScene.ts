@@ -239,7 +239,6 @@ export default class WorldScene extends Scene {
 
     fireLaser = (worldCoords:Tuple) => {
         let target = this.map.getTileAtWorldXY(worldCoords.x, worldCoords.y, true, undefined, 'terrain')
-        this.cameras.main.flash(200,200,0,0)
         if(target.index === TileIndexes.frost.impassible || target.index === TileIndexes.frost.debris){
             target.index = TileIndexes.frost.passable
             target.setCollision(false)
@@ -253,11 +252,12 @@ export default class WorldScene extends Scene {
         else if(target.index === TileIndexes.frost.frostTile || target.index === TileIndexes.frost.frostTile2) target.index = TileIndexes.frost.passable
         this.sounds.laser.play()
         onUseReactor()
+        let exit = this.map.getTileAt(this.levelExit.x, this.levelExit.y, false, 'doodads')
+        exit.index = TileIndexes.exit
     }
 
     fireCryo = (worldCoords:Tuple) => {
         let target = this.map.getTileAtWorldXY(worldCoords.x, worldCoords.y, true, undefined, 'terrain')
-        this.cameras.main.flash(200,0,0,200)
         if(target.index === TileIndexes.fire.fireTile || target.index === TileIndexes.fire.fireTile2) 
             target.index = TileIndexes.fire.passable
         else if(target.index === TileIndexes.fire.passable || target.index === TileIndexes.frost.passable) {
@@ -353,6 +353,10 @@ export default class WorldScene extends Scene {
             onComplete: () => {
                 rotator.remove()
                 wave.destroy()
+                let exit = this.map.getTileAt(this.levelExit.x, this.levelExit.y, false, 'terrain')
+                exit.index = isFrost ? TileIndexes.frost.passable : TileIndexes.fire.passable
+                exit.setCollision(false)
+                this.tileData[this.levelExit.x][this.levelExit.y].collides = false
             }
         })
     }

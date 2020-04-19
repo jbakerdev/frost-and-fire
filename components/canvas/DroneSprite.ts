@@ -19,6 +19,7 @@ export default class DroneSprite extends GameObjects.Sprite {
         scene.add.existing(this)
         this.setDepth(3)
         this.id = v4()
+        this.range = new Geom.Rectangle(this.getCenter().x-32, this.getCenter().y-32, 64, 64)
         this.g = scene.add.graphics()
         this.g.lineStyle(1, 0x00ff00, 1)
         this.rangeG = scene.add.graphics()
@@ -64,6 +65,7 @@ export default class DroneSprite extends GameObjects.Sprite {
             onComplete: () => {
                 this.floater.remove()
                 this.setPosition(x,y)
+                this.range = new Geom.Rectangle(this.getCenter().x-32, this.getCenter().y-32, 64, 64)
                 this.setInteractive()
                 this.floater = this.scene.tweens.add({
                     targets: this,

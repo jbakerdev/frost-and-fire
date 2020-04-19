@@ -60,11 +60,11 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
         if(this.props.reactorCharges > 0){
             let index = (+e.key)
             switch(index){
-                case 1: onToggleAimLaser()
+                case 1: if(!this.props.aimLaser) onToggleAimLaser()
                 break
-                case 2: onToggleAimCryo()
+                case 2: if(!this.props.aimCryo && this.props.colonistsSaved >= 5) onToggleAimCryo()
                 break
-                case 3: onStartPlaceDrone()
+                case 3: if(!this.props.placingDrone && this.props.crew >= 3) onStartPlaceDrone()
                 break
             }
         }
@@ -114,7 +114,7 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
                 </div>
                 <div style={{position:'absolute', right:0, top:0, bottom:0, display:'flex', justifyContent:'space-around', flexDirection:'column'}}>
                     <div style={{width:'32px'}}>
-                        <div style={{height:'150px', marginBottom:'10px'}}>{VerticalProgressBar(this.props.colonistsSaved, GOAL_CREW, 'Crew Saved')}</div>
+                        <div style={{height:'150px', marginBottom:'10px'}}>{VerticalProgressBar(this.props.colonistsSaved, GOAL_CREW, 'Crew Saved', '#00aaaa')}</div>
                         {Icon(Icons.ship, '', true)}
                     </div>
                     <div style={{width:'32px'}}>

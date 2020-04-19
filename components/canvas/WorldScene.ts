@@ -199,6 +199,18 @@ export default class WorldScene extends Scene {
             },
             repeat: -1
         })
+        this.time.addEvent({
+            delay:1000,
+            repeat: -1,
+            callback: () => {
+                this.map.forEachTile((tile)=>{
+                    if(tile.index === TileIndexes.frost.frostTile) return tile.index = TileIndexes.frost.frostTile2
+                    if(tile.index === TileIndexes.frost.frostTile2) return tile.index = TileIndexes.frost.frostTile
+                    if(tile.index === TileIndexes.fire.fireTile) return tile.index = TileIndexes.fire.fireTile2
+                    if(tile.index === TileIndexes.fire.fireTile2) return tile.index = TileIndexes.fire.fireTile
+                }, undefined,undefined,undefined,undefined,undefined,undefined,'terrain')
+            }
+        })
     }
 
     updateSelectedIcon = (gameObject?:DroneSprite) => {
@@ -232,7 +244,7 @@ export default class WorldScene extends Scene {
             target.setCollision(false)
             this.tileData[target.x][target.y].collides = false
         } 
-        else if(target.index === TileIndexes.frost.frostTile) target.index = TileIndexes.frost.passable
+        else if(target.index === TileIndexes.frost.frostTile || target.index === TileIndexes.frost.frostTile2) target.index = TileIndexes.frost.passable
         this.sounds.laser.play()
         onUseReactor()
     }
@@ -308,7 +320,9 @@ export default class WorldScene extends Scene {
                         if(doodad) tile.index = TileIndexes.frost.passable
                         else if(tile.collides) tile.index = TileIndexes.frost.impassible
                         else {
-                            if(Phaser.Math.Between(0,1)===0) tile.index = TileIndexes.frost.frostTile
+                            if(Phaser.Math.Between(0,1)===0){
+                                tile.index = TileIndexes.frost.frostTile
+                            } 
                             else tile.index = TileIndexes.frost.passable
                         }
                     }
@@ -316,7 +330,9 @@ export default class WorldScene extends Scene {
                         if(doodad) tile.index = TileIndexes.fire.passable
                         else if(tile.collides) tile.index = TileIndexes.fire.impassible
                         else {
-                            if(Phaser.Math.Between(0,1)===0) tile.index = TileIndexes.fire.fireTile
+                            if(Phaser.Math.Between(0,1)===0){
+                                tile.index = TileIndexes.fire.fireTile
+                            } 
                             else tile.index = TileIndexes.fire.passable
                         }
                     }
@@ -369,7 +385,7 @@ export default class WorldScene extends Scene {
     }
 
     colonistOverTile = (colonistSprite:any, tile:any) => {
-        if(tile.index === TileIndexes.frost.frostTile || tile.index === TileIndexes.fire.fireTile){
+        if(tile.index === TileIndexes.frost.frostTile || tile.index === TileIndexes.frost.frostTile2 ||  tile.index === TileIndexes.fire.fireTile || tile.index === TileIndexes.fire.fireTile2){
             colonistSprite.takeDamage()
         }
     }

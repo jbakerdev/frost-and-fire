@@ -75,15 +75,15 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
                 {this.props.modal === Modal.LOSE && <Lose/>}
                 {this.props.modal === Modal.WIN && <Win/>}
                 <div style={{position:'absolute', top:0, left:0, display:'flex', width:'100%', justifyContent:'space-between', alignItems:'center'}}>
+                    <div>
+                        <h6>Colonists {this.props.colonistsRemaining}</h6>
+                    </div>
                     <div style={{display:'flex', alignItems:'center'}}>
                         <div style={{position:'relative'}}>
-                            <div style={{transition:'all 250ms', transform: 'rotate('+360*(this.props.hour/24)+'deg)', width:'64px', height:'64px'}}>{Icon(Icons.sun_moon, '', true)}</div>
+                            <div style={{transform: 'rotate('+360*(this.props.hour/24)+'deg)', width:'64px', height:'64px'}}>{Icon(Icons.sun_moon, '', true, true)}</div>
                             <div style={{position:'absolute', bottom:0, left:0, height:'50%', width:'100%', background:'black'}}/>
                         </div>
                         <h4 style={{marginLeft:'0.5em'}}>{getTimeText(this.props.hour)}</h4>
-                    </div>
-                    <div>
-                        <h6>Colonists {this.props.colonistsRemaining}</h6>
                     </div>
                     <div>
                         <h6>Ship's Crew {this.props.colonistsSaved} / 50</h6>
@@ -91,19 +91,22 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
                     </div>
                 </div>
                 <CanvasFrame />
-                <div style={{position:'absolute', bottom:0, left:0, display:'flex'}}>
-                    <div style={{marginRight:'1em'}}>{Button(!this.props.activeWave, onStartWave, Icon(Icons.colonist, 'Signal a group of colonists'))}</div>
+                <div style={{position:'absolute', bottom:0, left:0, right:0, display:'flex', justifyContent:"center"}}>
+                    <div style={{marginRight:'1em', display:'flex', alignItems:'center'}}>
+                        Enter: {Button(!this.props.activeWave, onStartWave, 
+                            Icon(Icons.colonist, '', true), 
+                            'Signal a group of colonists to run to the ship.')}</div>
                     <div style={{marginRight:'1em', display:'flex', alignItems:'center'}}>
                         1: {Button(!this.props.aimLaser && this.props.reactorCharges > 0, onToggleAimLaser, 
-                            Icon(Icons.laser, ''), 
+                            Icon(Icons.laser, '', true), 
                             'A mining laser. Removes one obstruction or melts frost.')}</div>
                     <div style={{marginRight:'1em', display:'flex', alignItems:'center'}}>
                         2: {Button(!this.props.aimCryo && this.props.colonistsSaved >= 5 && this.props.reactorCharges > 0, onToggleAimCryo, 
-                            Icon(Icons.cryo, ''), 
+                            Icon(Icons.cryo, '', true), 
                             'A cryo beam. Places one obstruction or removes fire. Requires 5 or more crew to operate.')}</div>
                     <div style={{marginRight:'1em', display:'flex', alignItems:'center'}}>
                         3: {Button(!this.props.placingDrone , onStartPlaceDrone, 
-                            Icon(Icons.drone, ''), 
+                            Icon(Icons.drone, '', true), 
                             'A drone that heals colonists near it. Each one requires 3 crew to operate.')}</div>
                     <div style={{width:'100px', marginRight:'2em', height:'32px'}}>
                         <h6>Reactor</h6>

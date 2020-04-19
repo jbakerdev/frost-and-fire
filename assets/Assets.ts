@@ -29,6 +29,7 @@ export const TileIndexes = {
     colonist: 9,
     frost: {
          frostTile: 4, 
+         frostTile2: 16,
          frostWave: 11,
          impassible: 7,
          passable: 6,
@@ -36,6 +37,7 @@ export const TileIndexes = {
     },
     fire: { 
         fireTile: 5, 
+        fireTile2:15,
         fireWave: 10,
         passable: 3,
         impassible: 8,
@@ -59,4 +61,4 @@ export const Icons = {
     colonist: require('./colonist_walk.gif')
 }
 
-export const IntroText = "\n\nDeep in the caves Khu's people have lived for thousands of their short generations, ravaged by radiation from the nearby quasar. \n\nThere were legends of a surviving ship far away beyond the rock walls that will carry them to a world of green, far from frost and fire. \n\nOne day, earthquakes happened to clear the way to the ship while Khu was out hunting. The ship taught Khu its ways, now Khu must save the people."
+export const IntroText = "\n\nOne day, earthquakes happened to clear the way to the strange ship while Khu was out hunting. The ship taught Khu its ways, now Khu must save the people.\n\nDeep in the caves Khu's people have lived for thousands of their short generations, ravaged by radiation from the nearby quasar. \n\nThere were legends of a surviving ship far away beyond the rock walls that will carry them to a world of green, far from frost and fire. "

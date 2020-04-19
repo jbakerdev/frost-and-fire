@@ -35,7 +35,7 @@ export default {
         color:colors.grey3
     },
     buttonInner: {
-        border:'1px solid', padding:'5px',
+        padding:'5px',
         background:'black',
         cursor:'pointer',
         display:'flex'

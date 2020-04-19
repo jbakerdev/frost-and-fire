@@ -26,7 +26,7 @@ export const moveTowardXY = (currentSprite:Physics.Arcade.Sprite, x:number, y:nu
 }
 
 export const isFrostTile = (index:number) => {
-    return index === TileIndexes.frost.debris||index === TileIndexes.frost.frostTile||index === TileIndexes.frost.frostWave||index === TileIndexes.frost.impassible||index === TileIndexes.frost.passable
+    return index === TileIndexes.frost.debris||index === TileIndexes.frost.frostTile ||index === TileIndexes.frost.frostTile2 ||index === TileIndexes.frost.frostWave||index === TileIndexes.frost.impassible||index === TileIndexes.frost.passable
 }
 
 export const shuffle = (array:Array<any>) => {

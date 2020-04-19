@@ -71,7 +71,7 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
 
     render(){
         return (
-            <div style={{position:'relative'}}>
+            <div style={{position:'relative', padding:'55px'}}>
                 {this.props.modal === Modal.INTRO && <Intro/>}
                 {this.props.modal === Modal.LOSE && <Lose/>}
                 {this.props.modal === Modal.WIN && <Win/>}
@@ -80,7 +80,7 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
                         <h6>Colonists {this.props.colonistsRemaining}</h6>
                     </div>
                     <div style={{display:'flex', alignItems:'center'}}>
-                        <div style={{position:'relative'}}>
+                        <div style={{position:'relative', height:'55px'}}>
                             <div style={{transform: 'rotate('+360*(this.props.hour/24)+'deg)', width:'64px', height:'64px'}}>{Icon(Icons.sun_moon, '', true, true)}</div>
                             <div style={{position:'absolute', bottom:0, left:0, height:'50%', width:'100%', background:'black'}}/>
                         </div>

@@ -1,6 +1,4 @@
 import * as React from 'react'
-import AppStyles from '../../AppStyles';
-import { TopBar, Button, Icon, NumericInput, LightButton, ButtonStrip } from '../helpers/Shared'
 import { onInitSession } from '../uiManager/Thunks';
 import { IntroText } from '../../assets/Assets';
 

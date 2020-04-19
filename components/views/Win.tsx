@@ -1,13 +1,7 @@
 import * as React from 'react'
-import AppStyles from '../../AppStyles';
-import { TopBar, Button, Icon, NumericInput, LightButton, ButtonStrip } from '../helpers/Shared'
-import { onInitSession } from '../uiManager/Thunks';
 import { WinText } from '../../assets/Assets';
 
-interface Props{
-}
-
-export default class Win extends React.PureComponent<Props> {
+export default class Win extends React.PureComponent {
 
     scrollRef = React.createRef<HTMLDivElement>()
     interval = null
@@ -28,7 +22,7 @@ export default class Win extends React.PureComponent<Props> {
                         <h2 style={{fontFamily: 'title', color:'#00aaaa'}}>FROST</h2>
                         <h2 style={{fontFamily: 'title', marginLeft:'4em'}}>&</h2>
                         <h2 style={{fontFamily: 'title', color:'#ff5555', marginLeft:'4em'}}>FIRE</h2>
-                        <h3 className='blink' onClick={onInitSession} style={{marginTop:'1em', cursor:'pointer', textAlign: 'center'}}>THE END</h3>
+                        <h3 className='blink' onClick={()=>window.location.reload()} style={{marginTop:'1em', cursor:'pointer', textAlign: 'center'}}>THE END</h3>
                     </div>
                     <div ref={this.scrollRef} style={{overflow:"hidden", height:'80%'}}>
                         <h5 style={{textAlign:'left', whiteSpace:'pre-line'}}>{WinText}</h5>

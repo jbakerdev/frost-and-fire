@@ -120,13 +120,19 @@ export default class WorldScene extends Scene {
         this.cameras.main.centerOn(this.map.widthInPixels/2, this.map.heightInPixels/2)
 
         this.input.on('pointerover', (event, gameObjects) => {
-            if(gameObjects[0])  gameObjects[0].showRange()
+            if(gameObjects[0]) {
+                this.updateSelectedIcon(gameObjects[0])
+                gameObjects[0].showRange()
+            } 
         })
         this.input.on('pointerout', (event, gameObjects) => {
-            if(gameObjects[0])  gameObjects[0].hideRange()
+            if(gameObjects[0]) {
+                gameObjects[0].hideRange()
+                this.selectIcon.setVisible(false)
+            } 
         })
-        this.input.on('pointermove', (event) => {
-            this.updateSelectedIcon()
+        this.input.on('pointermove', (event, gameObjects) => {
+            this.updateSelectedIcon(gameObjects[0])
         })
         this.input.on('pointerdown', (event, gameObjects) => {
             let state = store.getState()
@@ -182,7 +188,11 @@ export default class WorldScene extends Scene {
         })
     }
 
-    updateSelectedIcon = () => {
+    updateSelectedIcon = (gameObject?:DroneSprite) => {
+        if(gameObject){
+            this.setSelectIconPosition({x: gameObject.getCenter().x, y: gameObject.getCenter().y}, 'selected')
+            return
+        }
         let tile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined,'terrain')
         if(tile){
             let state = store.getState()
@@ -192,7 +202,7 @@ export default class WorldScene extends Scene {
                 this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'cryo')
             else if(state.placingDrone || this.chooseDronePosition)
                 this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'drone')
-            else if(this.selectIcon) this.selectIcon.setVisible(false)
+            else this.selectIcon.setVisible(false)
         }
     }
 

@@ -54,6 +54,7 @@ export default class DroneSprite extends GameObjects.Sprite {
     move = (x:number, y:number) => {
         this.scene.sounds.drone.play()
         this.rangeG.clear()
+        this.disableInteractive()
         this.scene.tweens.add({
             targets: this,
             x,y,
@@ -61,6 +62,7 @@ export default class DroneSprite extends GameObjects.Sprite {
             onComplete: () => {
                 this.floater.remove()
                 this.setPosition(x,y)
+                this.setInteractive()
                 this.floater = this.scene.tweens.add({
                     targets: this,
                     duration:1000,

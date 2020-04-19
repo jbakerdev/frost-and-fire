@@ -56,3 +56,7 @@ export const onLostColonist = () => {
 export const onNoCharges = () => {
     dispatch({ type: UIReducerActions.NO_CHARGE })
 }
+
+export const onHideModal = () => {
+    dispatch({ type: UIReducerActions.HIDE_MODAL })
+}

@@ -12,11 +12,15 @@ export enum UIReducerActions {
     COLONIST_LOST='lost',
     START_PLACE_DRONE='place',
     PLACE_DRONE='pld',
-    NO_CHARGE='nchrg'
+    NO_CHARGE='nchrg',
+    HIDE_MODAL='hmdl'
 }
 
 export enum Modal {
-    HELP='halp'
+    HELP='halp',
+    INTRO='intro',
+    LOSE='lose',
+    WIN='win'
 }
 
 export const NIGHTFALL=20

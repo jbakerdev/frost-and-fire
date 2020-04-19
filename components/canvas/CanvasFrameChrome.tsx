@@ -5,7 +5,10 @@ import { onStartWave, onToggleAimCryo, onToggleAimLaser, onStartPlaceDrone, onNo
 import { connect } from 'react-redux';
 import CanvasFrame from './CanvasFrame';
 import { Icons } from '../../assets/Assets';
-import { NIGHTFALL, DAYBREAK } from '../../enum';
+import { NIGHTFALL, DAYBREAK, Modal } from '../../enum';
+import Intro from '../views/Intro';
+import Lose from '../views/Lose';
+import Win from '../views/Win';
 
 interface Props {
     activeWave?:boolean
@@ -18,6 +21,7 @@ interface Props {
     crew?: number
     reactorCharges?: number
     maxReactorCharges?: number
+    modal?:Modal
 }
 
 interface State {
@@ -34,7 +38,8 @@ interface State {
     colonistsSaved: state.colonistsSaved,
     crew: state.crew,
     reactorCharges: state.reactorCharges,
-    maxReactorCharges: state.maxReactorCharges
+    maxReactorCharges: state.maxReactorCharges,
+    modal: state.modal
 })) as any)
 export default class CanvasFrameChrome extends React.Component<Props, State> {
 
@@ -66,6 +71,9 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
     render(){
         return (
             <div style={{position:'relative'}}>
+                {this.props.modal === Modal.INTRO && <Intro/>}
+                {this.props.modal === Modal.LOSE && <Lose/>}
+                {this.props.modal === Modal.WIN && <Win/>}
                 <div style={{position:'absolute', top:0, left:0, display:'flex', width:'100%', justifyContent:'space-between', alignItems:'center'}}>
                     <div style={{display:'flex', alignItems:'center'}}>
                         <div style={{position:'relative'}}>

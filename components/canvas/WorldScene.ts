@@ -1,7 +1,6 @@
 import { Scene, GameObjects, Tilemaps, Geom, Physics, Sound } from "phaser";
 import { store } from "../../App";
 import { defaults, TileIndexes, PassableIndexes, DebrisShapes } from '../../assets/Assets'
-import { _getCircle } from "../helpers/Fov";
 import ColonistSprite from "./ColonistSprite";
 import AStar from "../helpers/AStar";
 import { onSetWaveInactive, onUpdateHour, onCancelToggle, onUseReactor, onSavedColonist, onLostColonist, onPlaceDrone, onChargeReactor } from "../uiManager/Thunks";
@@ -79,6 +78,9 @@ export default class WorldScene extends Scene {
                     break
                 case UIReducerActions.NO_CHARGE:
                     this.showText(this.input.activePointer.worldX, this.input.activePointer.worldY, 'Reactor power low!')
+                    break
+                case UIReducerActions.NEW_SESSION:
+                    this.startTimers()
                     break
             }
     }
@@ -169,6 +171,9 @@ export default class WorldScene extends Scene {
             frameRate: 4,
             repeat: -1
         })
+    }
+
+    startTimers = () => {
         this.time.addEvent({
             delay: 10000,
             callback: () => {
@@ -269,14 +274,11 @@ export default class WorldScene extends Scene {
         let indexes = []
         this.colonistSprites.forEach((spr,i)=>{
             if(spr.health <= 0) {
-                this.sounds.dead.play()
-                this.deaths.get(spr.x, spr.y, 'bones')
                 indexes.push(i)
-                onLostColonist()
             }
         })
         indexes.forEach(i=>{
-            this.colonistSprites.splice(i,1)[0].destroy()
+            this.destroyColonist(this.colonistSprites[i])
         })
     }
 
@@ -318,10 +320,7 @@ export default class WorldScene extends Scene {
                 let bodies = this.physics.overlapRect(rect.x, rect.y, rect.width, rect.height)
                 for(var i=0;i<bodies.length;i++){
                     let spr = bodies[i].gameObject as ColonistSprite
-                    this.deaths.get(spr.x, spr.y, 'bones')
-                    this.sounds.dead.play()
-                    let j = this.colonistSprites.findIndex(cspr=>cspr.id === spr.id)
-                    this.colonistSprites.splice(j,1)[0].destroy()
+                    this.destroyColonist(spr)
                 }
                 if(Phaser.Math.Between(0,30) === 10) this.triggerAvalanche()
             },
@@ -330,6 +329,14 @@ export default class WorldScene extends Scene {
                 wave.destroy()
             }
         })
+    }
+
+    destroyColonist = (spr:ColonistSprite)=> {
+        this.deaths.get(spr.x, spr.y, 'bones')
+        this.sounds.dead.play()
+        let j = this.colonistSprites.findIndex(cspr=>cspr.id === spr.id)
+        onLostColonist()
+        this.colonistSprites.splice(j,1)[0].destroy()
     }
 
     triggerAvalanche = () => {

@@ -5,7 +5,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
     state.engineEvent = null
     switch (action.type) {
         case UIReducerActions.NEW_SESSION:
-            return getInitialState()
+            return { ...state, engineEvent: UIReducerActions.NEW_SESSION, modal:null }
         case UIReducerActions.START_WAVE:
             return { ...state, activeWave: true, engineEvent: UIReducerActions.START_WAVE, colonistsRemaining: state.colonistsRemaining-WAVE_SIZE }
         case UIReducerActions.WAVE_SENT:
@@ -25,13 +25,15 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.SAVE_COLONIST:
             return { ...state, colonistsRemaining: state.colonistsRemaining-1, colonistsSaved: state.colonistsSaved+1, crew: state.crew+1 }
         case UIReducerActions.COLONIST_LOST:
-            return { ...state, colonistsRemaining: state.colonistsRemaining-1}
+            return { ...state, colonistsRemaining: state.colonistsRemaining-1 }
         case UIReducerActions.START_PLACE_DRONE:
             return { ...state, placingDrone: true}
         case UIReducerActions.PLACE_DRONE:
             return { ...state, placingDrone: false, crew: state.crew-3}
         case UIReducerActions.NO_CHARGE:
             return { ...state, engineEvent: UIReducerActions.NO_CHARGE }
+        case UIReducerActions.HIDE_MODAL:
+            return { ...state, modal: null }
         default:
             return state
     }
@@ -41,7 +43,7 @@ export default appReducer;
 
 const getInitialState = ():RState => {
     return {
-        modal: null,
+        modal: Modal.INTRO,
         activeWave: false,
         engineEvent: null,
         hour: 18,

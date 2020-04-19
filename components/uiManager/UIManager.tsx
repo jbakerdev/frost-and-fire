@@ -14,8 +14,7 @@ export default class UIManager extends React.Component<Props> {
     render(){
         return (
             <div style={styles.frame}>
-                <CanvasFrameChrome />
-                {/* <Splash/> */}
+                <Splash/>
             </div>
         )
     }

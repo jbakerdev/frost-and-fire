@@ -11,9 +11,10 @@ export const defaults = [
     { key: 'cryo', resource: require('./icon/cryo.png'), type: 'image'},
     { key: 'laser', resource: require('./icon/laser.png'), type: 'image'},
     { key: 'drone', resource: require('./icon/drone.png'), type: 'image'},
-    { key: 'tilemap', resource: require('./tiles.png'), type: 'image'},
+    { key: 'tilemap', resource: require('./tiles2.png'), type: 'image'},
     { key: 'map', resource: require('./map.json'), type: 'tilemapTiledJSON', data: {}},
-    { key: 'tiles', resource: require('./tiles.png'), type: 'spritesheet', data: { frameWidth: 16, frameHeight: 16 }},
+    { key: 'tiles', resource: require('./tiles2.png'), type: 'spritesheet', data: { frameWidth: 16, frameHeight: 16 }},
+    { key: 'colonist', resource: require('./colonist.png'), type: 'spritesheet', data: { frameWidth: 16, frameHeight: 16 }},
 ]
 
 //Fun fact these are not zero indexed

@@ -141,7 +141,18 @@ export default class WorldScene extends Scene {
             this.chooseDronePosition = null
             this.selectIcon.setVisible(false)
         })
-
+        this.anims.create({
+            key: 'walk_right',
+            frames: this.anims.generateFrameNumbers('colonist', { start: 4, end: 7 }),
+            frameRate: 4,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'walk_up',
+            frames: this.anims.generateFrameNumbers('colonist', { start: 0, end: 3 }),
+            frameRate: 4,
+            repeat: -1
+        })
         this.time.addEvent({
             delay: 10000,
             callback: () => {

@@ -26,7 +26,7 @@ export default class CanvasFrame extends React.Component {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: true
+                    debug: false
                 }
             },
             render: {

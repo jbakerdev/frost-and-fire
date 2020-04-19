@@ -22,8 +22,8 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
         this.setDepth(1)
         this.speed = Phaser.Math.Between(35,60)
         this.health = Phaser.Math.Between(5,20)
-        this.body.setSize(16,8)
-        this.body.setOffset(0,8)
+        this.body.setSize(8,8)
+        this.body.setOffset(4,8)
         this.setScale(this.getScale())
         this.id = v4()
         this.timer = scene.time.addEvent({

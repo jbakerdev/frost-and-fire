@@ -62,7 +62,7 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
             switch(index){
                 case 1: if(!this.props.aimLaser) onToggleAimLaser()
                 break
-                case 2: if(!this.props.aimCryo && this.props.colonistsSaved >= 5) onToggleAimCryo()
+                case 2: if(!this.props.aimCryo && this.props.crew >= 5) onToggleAimCryo()
                 break
                 case 3: if(!this.props.placingDrone && this.props.crew >= 3) onStartPlaceDrone()
                 break
@@ -77,16 +77,16 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
                 {this.props.modal === Modal.INTRO && <Intro/>}
                 {this.props.modal === Modal.LOSE && <Lose/>}
                 {this.props.modal === Modal.WIN && <Win/>}
-                <div style={{position:'absolute', top:0, left:0, display:'flex', width:'100%', justifyContent:'space-between', alignItems:'center'}}>
+                <div style={{position:'absolute', top:0, left:0, display:'flex', width:'100%', alignItems:'center'}}>
                     <div style={{display:'flex', alignItems:'center'}}>
                         <div style={{position:'relative', height:'55px'}}>
                             <div style={{transform: 'rotate('+360*(this.props.hour/24)+'deg)', width:'64px', height:'64px'}}>{Icon(Icons.sun_moon, '', true, true)}</div>
                             <div style={{position:'absolute', bottom:0, left:0, height:'50%', width:'100%', background:'black'}}/>
                         </div>
-                        <h4 style={{marginLeft:'0.5em'}}>{getTimeText(this.props.hour)}</h4>
+                        <h4 style={{marginLeft:'0.5em', width:'100px'}}>{getTimeText(this.props.hour)}</h4>
                     </div>
-                    <div>
-                        <h6>Colonist Groups {Math.round(this.props.colonistsRemaining/10)}</h6>
+                    <div style={{marginLeft:'1em'}}>
+                        <h6 style={{marginBottom:'0.5em'}}>Colonist Groups {Math.round(this.props.colonistsRemaining/10)}</h6>
                         <h6>Next In {this.props.nextWave}</h6>
                     </div>
                 </div>
@@ -95,19 +95,19 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
                     <div style={{marginRight:'1em', display:'flex', alignItems:'center'}}>
                         Enter: {Button(!this.props.activeWave, onStartWave, 
                             Icon(Icons.colonist, '', true), 
-                            'Signal a group of colonists to run to the ship.')}</div>
+                            'Signal a group of colonists to run to the ship now.')}</div>
                     <div style={{marginRight:'1em', display:'flex', alignItems:'center'}}>
                         1: {Button(!this.props.aimLaser && this.props.reactorCharges > 0, onToggleAimLaser, 
                             Icon(Icons.laser, '', true), 
-                            'A mining laser. Removes one obstruction or melts frost.')}</div>
+                            'A mining laser. Removes one obstruction or removes frost.')}</div>
                     <div style={{marginRight:'1em', display:'flex', alignItems:'center'}}>
-                        2: {Button(!this.props.aimCryo && this.props.colonistsSaved >= 5 && this.props.reactorCharges > 0, onToggleAimCryo, 
+                        2: {Button(!this.props.aimCryo && this.props.crew >= 5 && this.props.reactorCharges > 0, onToggleAimCryo, 
                             Icon(Icons.cryo, '', true), 
-                            'A cryo beam. Places one obstruction or removes fire. Requires 5 or more crew to operate.')}</div>
+                            'A cryo beam. Places one obstruction or removes fire. 5 crew to operate.')}</div>
                     <div style={{marginRight:'1em', display:'flex', alignItems:'center'}}>
                         3: {Button(!this.props.placingDrone && this.props.crew >= 3, onStartPlaceDrone, 
                             Icon(Icons.drone, '', true), 
-                            'A drone that heals colonists near it. Each one requires 3 crew to operate. Can be moved by selecting it.')}</div>
+                            'A drone that heals colonists near it. 3 crew to operate. Can be moved by selecting it.')}</div>
                     <div style={{display:'flex', alignItems:'center'}}>
                         <h5>Spare Crew {this.props.crew}</h5>
                     </div>
@@ -133,5 +133,5 @@ const getTimeText = (hour:number) => {
     if(hour > NIGHTFALL || hour < DAYBREAK) return 'Night'
     if(hour === NIGHTFALL || hour === NIGHTFALL-1) return 'Dusk'
     if(hour === DAYBREAK || hour === DAYBREAK-1) return 'Dawn'
-    if(hour > DAYBREAK) return 'Daylight'
+    if(hour > DAYBREAK) return 'Day'
 }

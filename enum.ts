@@ -14,7 +14,8 @@ export enum UIReducerActions {
     PLACE_DRONE='pld',
     NO_CHARGE='nchrg',
     HIDE_MODAL='hmdl',
-    TOGGLE_AUDIO='tglau'
+    TOGGLE_AUDIO='tglau',
+    SHOW_MODAL='shmdl'
 }
 
 export enum Modal {

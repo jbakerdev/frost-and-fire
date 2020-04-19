@@ -3,8 +3,8 @@ import { store } from "../../App";
 import { defaults, TileIndexes, PassableIndexes, DebrisShapes } from '../../assets/Assets'
 import ColonistSprite from "./ColonistSprite";
 import AStar from "../helpers/AStar";
-import { onSetWaveInactive, onUpdateHour, onCancelToggle, onUseReactor, onSavedColonist, onLostColonist, onPlaceDrone, onChargeReactor, onStartWave } from "../uiManager/Thunks";
-import { UIReducerActions, NIGHTFALL, DAYBREAK, WAVE_SIZE } from "../../enum";
+import { onSetWaveInactive, onUpdateHour, onCancelToggle, onUseReactor, onSavedColonist, onLostColonist, onPlaceDrone, onChargeReactor, onStartWave, onShowModal } from "../uiManager/Thunks";
+import { UIReducerActions, NIGHTFALL, DAYBREAK, WAVE_SIZE, Modal } from "../../enum";
 import { isFrostTile } from "../helpers/Util";
 import DroneSprite from "./DroneSprite";
 
@@ -361,6 +361,8 @@ export default class WorldScene extends Scene {
         let j = this.colonistSprites.findIndex(cspr=>cspr.id === spr.id)
         onLostColonist()
         this.colonistSprites.splice(j,1)[0].destroy()
+        let state = store.getState()
+        if(state.colonistsRemaining < 50-state.colonistsSaved) onShowModal(Modal.LOSE)
     }
 
     triggerAvalanche = () => {
@@ -385,6 +387,8 @@ export default class WorldScene extends Scene {
             let i = this.colonistSprites.findIndex(spr=>spr.id === colonistSprite.id)
             this.colonistSprites.splice(i,1)[0].destroy()
             onSavedColonist()
+            let state = store.getState()
+            if(state.colonistsSaved >= 50 && state.colonistsRemaining <= 0) onShowModal(Modal.WIN)
         }
     }
 

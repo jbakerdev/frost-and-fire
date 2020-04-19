@@ -36,6 +36,8 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, modal: null }
         case UIReducerActions.TOGGLE_AUDIO:
             return { ...state, engineEvent: UIReducerActions.TOGGLE_AUDIO }
+        case UIReducerActions.SHOW_MODAL:
+            return { ...state, modal: action.modal }
         default:
             return state
     }

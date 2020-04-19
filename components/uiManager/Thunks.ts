@@ -64,3 +64,7 @@ export const onHideModal = () => {
 export const onToggleAudio = () => {
     dispatch({ type: UIReducerActions.TOGGLE_AUDIO })
 }
+
+export const onShowModal = (modal:Modal) => {
+    dispatch({ type: UIReducerActions.SHOW_MODAL, modal })
+}

@@ -19,7 +19,7 @@ export default class Intro extends React.Component {
 
     render(){
         return (
-            <div style={{position:'absolute', top:0,left:0,right:0,bottom:0, height:'200px', width:'600px', padding:'1em', margin:'auto',zIndex:1, justifyContent:'space-between', background:'black', textAlign:'center', backgroundImage:'url('+require('../../assets/frost.png')+')'}}>
+            <div style={{position:'absolute', top:0,left:0,right:0,bottom:0, height:'208px', width:'593px', padding:'16px', margin:'auto',zIndex:1, justifyContent:'space-between', background:'black', textAlign:'center', backgroundImage:'url('+require('../../assets/frost.png')+')'}}>
                 <div style={{display:'flex', height:'100%', justifyContent:'space-around', alignItems:"center", background:'black'}}>
                     <div style={{marginRight:'10px'}}>
                         <h2 style={{fontFamily: 'title', color:'#00aaaa'}}>FROST</h2>

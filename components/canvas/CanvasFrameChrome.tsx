@@ -71,7 +71,7 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
 
     render(){
         return (
-            <div style={{position:'relative', padding:'55px'}}>
+            <div style={{position:'relative', paddingTop:'55px', paddingBottom:'55px', paddingRight:'30px'}}>
                 {this.props.modal === Modal.INTRO && <Intro/>}
                 {this.props.modal === Modal.LOSE && <Lose/>}
                 {this.props.modal === Modal.WIN && <Win/>}

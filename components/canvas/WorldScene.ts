@@ -77,7 +77,7 @@ export default class WorldScene extends Scene {
                     this.updateSelectedIcon()
                     break
                 case UIReducerActions.NO_CHARGE:
-                    this.showText(this.input.activePointer.worldX, this.input.activePointer.worldY, 'Reactor power low!')
+                    this.flashSprite(this.input.activePointer.worldX, this.input.activePointer.worldY, 'noenergy')
                     break
                 case UIReducerActions.NEW_SESSION:
                     this.colonistSprites.forEach(spr=>spr.destroy())
@@ -423,23 +423,17 @@ export default class WorldScene extends Scene {
         this.selectIcon.setVisible(true)
     }
 
-    showText = (x:number, y:number, text:string) => {
-        let font = this.add.text(x-30, y, text,  {
-            fontFamily: 'Arcology',
-            fontSize: '12px',
-            color:'white'
-        })
-        font.setStroke('#000000', 2);
-        font.setWordWrapWidth(300)
-        font.setDepth(4)
+    flashSprite = (x:number, y:number, texture:string) => {
+        let spr = this.add.image(x, y, texture).setScale(1.5)
+        spr.setDepth(4)
         this.add.tween({
-            targets: font,
+            targets: spr,
             ease: 'Stepped',
             easeParams:[3],
             duration: 1000,
             alpha: 0,
             onComplete: ()=>{
-                font.destroy()
+                spr.destroy()
             }
         })
     }

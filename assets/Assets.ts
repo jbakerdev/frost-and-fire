@@ -12,6 +12,7 @@ export const defaults = [
     { key: 'bones', resource: require('./icon/bones.png'), type: 'image'},
     { key: 'cryo', resource: require('./icon/cryo.png'), type: 'image'},
     { key: 'laser', resource: require('./icon/laser.png'), type: 'image'},
+    { key: 'noenergy', resource: require('./icon/noenergy.png'), type: 'image'},
     { key: 'drone', resource: require('./icon/drone.png'), type: 'image'},
     { key: 'selected', resource: require('./icon/selected.png'), type: 'image'},
     { key: 'tilemap', resource: require('./tiles2.png'), type: 'image'},

@@ -119,6 +119,12 @@ export default class WorldScene extends Scene {
         this.cameras.main.setZoom(2)
         this.cameras.main.centerOn(this.map.widthInPixels/2, this.map.heightInPixels/2)
 
+        this.input.on('pointerover', (event, gameObjects) => {
+            if(gameObjects[0])  gameObjects[0].showRange()
+        })
+        this.input.on('pointerout', (event, gameObjects) => {
+            if(gameObjects[0])  gameObjects[0].hideRange()
+        })
         this.input.on('pointermove', (event) => {
             this.updateSelectedIcon()
         })

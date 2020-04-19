@@ -46,14 +46,17 @@ export const runSpriteFOV = (sprite:GameObjects.Sprite, tileData:Array<Array<Til
 export const moveTowardXY = (currentSprite:Physics.Arcade.Sprite, x:number, y:number, speed:number) => {
     let dir = {x: x-currentSprite.x, y:y-currentSprite.y}
     if(dir.x > dir.y){
-        if(dir.x > 0) currentSprite.anims.play('walk_right')
+        if(dir.x > 0) {
+            currentSprite.anims.play('walk_right', true)
+            currentSprite.flipX = false
+        }
         else if(dir.x < 0){
             currentSprite.flipX = true
-            currentSprite.anims.play('walk_right')
+            currentSprite.anims.play('walk_right', true)
         } 
     }
-    else if(dir.y > 0 || dir.y < 0) currentSprite.anims.play('walk_up')
-    
+    else if(dir.y > 0 || dir.y < 0) currentSprite.anims.play('walk_up', true)
+
     let mag = Math.sqrt(dir.x*dir.x + dir.y*dir.y);
     dir.x = dir.x/mag; dir.y = dir.y/mag;
     currentSprite.setVelocity(dir.x*speed, dir.y*speed)

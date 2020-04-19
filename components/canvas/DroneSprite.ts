@@ -9,7 +9,8 @@ export default class DroneSprite extends GameObjects.Sprite {
     id:string
     timer: Phaser.Time.TimerEvent
     scene: WorldScene
-    range: number
+    range: Geom.Rectangle
+    rangeG: GameObjects.Graphics
     g: GameObjects.Graphics
     floater: Phaser.Tweens.Tween
    
@@ -18,11 +19,13 @@ export default class DroneSprite extends GameObjects.Sprite {
         scene.add.existing(this)
         this.setDepth(3)
         this.id = v4()
-        this.g = scene.add.graphics({x,y})
-        this.g.lineStyle(3, 0x00ff00, 0.5)
+        this.g = scene.add.graphics()
+        this.g.lineStyle(1, 0x00ff00, 1)
+        this.rangeG = scene.add.graphics()
+        this.rangeG.fillStyle(0x00ff00, 0.3)
         this.setInteractive()
-        this.g.setDepth(3)
-        this.range = 3
+        this.g.setDepth(2)
+        this.rangeG.setDepth(2)
         this.timer = scene.time.addEvent({
             delay: 500,
             callback: () => {
@@ -39,7 +42,18 @@ export default class DroneSprite extends GameObjects.Sprite {
         })
     }
 
+    showRange = () => {
+        this.range = new Geom.Rectangle(this.getCenter().x-32, this.getCenter().y-32, 64, 64)
+        this.rangeG.fillRectShape(this.range)
+    }
+
+    hideRange = () => {
+        this.rangeG.clear()
+    }
+
     move = (x:number, y:number) => {
+        this.scene.sounds.drone.play()
+        this.rangeG.clear()
         this.scene.tweens.add({
             targets: this,
             x,y,
@@ -60,20 +74,17 @@ export default class DroneSprite extends GameObjects.Sprite {
 
     step = () => {
         let center = this.getCenter()
-        let target = this.scene.physics.overlapRect(center.x, center.y, 3*16,3*16)[0]
+        let target = this.scene.physics.overlapRect(this.range.x, this.range.y, this.range.width, this.range.height)[0]
         if(target){
             let colonist = target.gameObject as ColonistSprite
             colonist.heal(1)
-            this.g.setPosition(center.x, center.y)
-            this.g.strokePoints([
-                {x:center.x, y:center.y}, 
-                {x:colonist.getCenter().x, y:colonist.getCenter().y}
-            ])
+            this.g.strokeLineShape(new Geom.Line(center.x, center.y, colonist.getCenter().x, colonist.getCenter().y))
             this.scene.time.addEvent({
-                delay: 500,
+                delay: 75,
                 callback: ()=>{
                     this.g.clear()
-                }
+                },
+                repeat:1
             })
         }
     }

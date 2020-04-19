@@ -27,7 +27,7 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
         this.setScale(this.getScale())
         this.id = v4()
         this.timer = scene.time.addEvent({
-            delay: 500,
+            delay: 200,
             callback: () => {
                 this.step()
             },
@@ -101,5 +101,9 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
     destroy = () => {
         this.timer.remove()
         super.destroy()
+    }
+
+    preUpdate(time,delta){
+        this.anims.update(time,delta)
     }
 }

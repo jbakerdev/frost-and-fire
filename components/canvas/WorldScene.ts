@@ -240,7 +240,7 @@ export default class WorldScene extends Scene {
                 },
                 repeat: 5
             })
-            this.flashText(hour === NIGHTFALL-1 ? 'NIGHT IS APPROACHING' : 'DAWN IS APPROACHING')
+            this.flashText(hour === NIGHTFALL-1 ? 'NIGHT IS APPROACHING' : 'DAWN IS APPROACHING', hour === NIGHTFALL-1 ? '#5555ff' : 'red')
         }
         onUpdateHour((store.getState().hour+1) % 24)
     }
@@ -388,11 +388,11 @@ export default class WorldScene extends Scene {
         })
     }
 
-    flashText = (text:string) => {
+    flashText = (text:string, color:string) => {
         let font = this.add.text(100, this.map.heightInPixels/2, text,  {
             fontFamily: 'Arcology',
             fontSize: '12px',
-            color:'red'
+            color
         })
         font.setStroke('#ffffff', 2);
         font.setDepth(4)

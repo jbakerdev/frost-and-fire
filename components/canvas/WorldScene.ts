@@ -84,6 +84,10 @@ export default class WorldScene extends Scene {
                     this.colonistSprites.slice(0,this.colonistSprites.length-1)
                     this.startTimers()
                     break
+                case UIReducerActions.TOGGLE_AUDIO:
+                    if(this.sound.volume === 0) this.sound.volume = 0.6
+                    else this.sound.volume = 0
+                    break
             }
     }
 
@@ -252,7 +256,7 @@ export default class WorldScene extends Scene {
     fireCryo = (worldCoords:Tuple) => {
         let target = this.map.getTileAtWorldXY(worldCoords.x, worldCoords.y, true, undefined, 'terrain')
         this.cameras.main.flash(200,0,0,200)
-        if(target.index === TileIndexes.fire.fireTile) 
+        if(target.index === TileIndexes.fire.fireTile || target.index === TileIndexes.fire.fireTile2) 
             target.index = TileIndexes.fire.passable
         else if(target.index === TileIndexes.fire.passable || target.index === TileIndexes.frost.passable) {
             target.index = TileIndexes.frost.impassible

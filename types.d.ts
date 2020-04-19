@@ -13,7 +13,8 @@ declare enum UIReducerActions {
     START_PLACE_DRONE='place',
     PLACE_DRONE='pld',
     NO_CHARGE='nchrg',
-    HIDE_MODAL='hmdl'
+    HIDE_MODAL='hmdl',
+    TOGGLE_AUDIO='tglau'
 }
 
 declare enum Modal {

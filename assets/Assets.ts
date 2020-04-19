@@ -58,7 +58,9 @@ export const Icons = {
     laser: require('./icon/laser.png'),
     cryo: require('./icon/cryo.png'),
     drone: require('./icon/drone.png'),
-    colonist: require('./colonist_walk.gif')
+    colonist: require('./colonist_walk.gif'),
+    audio: require('./icon/audio.png'),
+    energy: require('./icon/energy.png')
 }
 
 export const IntroText = "\n\nOne day, earthquakes happened to clear the way to the strange ship while Khu was out hunting. The ship taught Khu its ways, now Khu must save the people.\n\nDeep in the caves Khu's people have lived for thousands of their short generations, ravaged by radiation from the nearby quasar. \n\nThere were legends of a surviving ship far away beyond the rock walls that will carry them to a world of green, far from frost and fire. "

@@ -60,3 +60,7 @@ export const onNoCharges = () => {
 export const onHideModal = () => {
     dispatch({ type: UIReducerActions.HIDE_MODAL })
 }
+
+export const onToggleAudio = () => {
+    dispatch({ type: UIReducerActions.TOGGLE_AUDIO })
+}

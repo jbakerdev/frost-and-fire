@@ -1,7 +1,7 @@
 import * as React from 'react';
 import AppStyles, { colors } from '../../AppStyles';
-import { ButtonStrip, Select, Button, Icon, ProgressBar } from '../helpers/Shared'
-import { onStartWave, onToggleAimCryo, onToggleAimLaser, onStartPlaceDrone, onNoCharges } from '../uiManager/Thunks';
+import { ButtonStrip, Select, Button, Icon, ProgressBar, VerticalProgressBar } from '../helpers/Shared'
+import { onStartWave, onToggleAimCryo, onToggleAimLaser, onStartPlaceDrone, onNoCharges, onToggleAudio } from '../uiManager/Thunks';
 import { connect } from 'react-redux';
 import CanvasFrame from './CanvasFrame';
 import { Icons } from '../../assets/Assets';
@@ -54,6 +54,7 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
     }
 
     handleKeyDown = (e:KeyboardEvent) => {
+        if(e.key === 'Enter' && !this.props.activeWave) return onStartWave()
         if(this.props.reactorCharges > 0){
             let index = (+e.key)
             switch(index){
@@ -86,7 +87,6 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
                         <h4 style={{marginLeft:'0.5em'}}>{getTimeText(this.props.hour)}</h4>
                     </div>
                     <div>
-                        <h6>Ship's Crew {this.props.colonistsSaved} / 50</h6>
                         <h6>Spare Crew {this.props.crew}</h6>
                     </div>
                 </div>
@@ -108,11 +108,19 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
                         3: {Button(!this.props.placingDrone , onStartPlaceDrone, 
                             Icon(Icons.drone, '', true), 
                             'A drone that heals colonists near it. Each one requires 3 crew to operate.')}</div>
-                    <div style={{width:'100px', marginRight:'2em', height:'32px'}}>
-                        <h6>Reactor</h6>
-                        {ProgressBar(this.props.reactorCharges, this.props.maxReactorCharges, 'Reactor Power')}
-                    </div>
                 </div>
+                <div style={{position:'absolute', right:0, top:0, bottom:0, display:'flex', justifyContent:'space-around', flexDirection:'column'}}>
+                    <div style={{width:'25px'}}>
+                        <div style={{height:'150px', marginBottom:'10px'}}>{VerticalProgressBar(this.props.colonistsSaved, 50, 'Crew Saved')}</div>
+                        {Icon(Icons.colonist, '', true)}
+                    </div>
+                    <div style={{width:'25px'}}>
+                        <div style={{height:'150px', marginBottom:'10px'}}>{VerticalProgressBar(this.props.reactorCharges, this.props.maxReactorCharges, 'Reactor Power')}</div>
+                        {Icon(Icons.energy, '', true)}
+                    </div>
+                    
+                </div>
+                <div style={{position:'absolute', bottom:0, right:0}} onClick={onToggleAudio}>{Icon(Icons.audio,'Mute',true)}</div>
             </div>
         )
     }

@@ -15,7 +15,8 @@ export enum UIReducerActions {
     NO_CHARGE='nchrg',
     HIDE_MODAL='hmdl',
     TOGGLE_AUDIO='tglau',
-    SHOW_MODAL='shmdl'
+    SHOW_MODAL='shmdl',
+    INC_WAVE='incw'
 }
 
 export enum Modal {
@@ -28,3 +29,5 @@ export enum Modal {
 export const NIGHTFALL=20
 export const DAYBREAK=6
 export const WAVE_SIZE=10
+export const GOAL_CREW=50
+export const WAVE_INTERVAL=45

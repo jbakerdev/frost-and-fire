@@ -68,3 +68,7 @@ export const onToggleAudio = () => {
 export const onShowModal = (modal:Modal) => {
     dispatch({ type: UIReducerActions.SHOW_MODAL, modal })
 }
+
+export const onUpdateWaveTime = () => {
+    dispatch({ type: UIReducerActions.INC_WAVE })
+}

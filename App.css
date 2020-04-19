@@ -45,7 +45,7 @@ input {
 .rc-tooltip-inner{
   min-height: 0;
   max-width: 20em;
-  background: #555;
+  background: black;
   color:white;
 }
 

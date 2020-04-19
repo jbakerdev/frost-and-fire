@@ -15,7 +15,8 @@ declare enum UIReducerActions {
     NO_CHARGE='nchrg',
     HIDE_MODAL='hmdl',
     TOGGLE_AUDIO='tglau',
-    SHOW_MODAL='shmdl'
+    SHOW_MODAL='shmdl',
+    INC_WAVE='incw'
 }
 
 declare enum Modal {
@@ -57,4 +58,5 @@ interface RState {
     colonistsRemaining: number
     colonistsSaved: number
     crew: number
+    nextWave: number
 }

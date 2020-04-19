@@ -83,7 +83,7 @@ export default class DroneSprite extends GameObjects.Sprite {
         let target = this.scene.physics.overlapRect(this.range.x, this.range.y, this.range.width, this.range.height)[0]
         if(target){
             let colonist = target.gameObject as ColonistSprite
-            colonist.heal(1)
+            colonist.heal(3)
             this.g.strokeLineShape(new Geom.Line(center.x, center.y, colonist.getCenter().x, colonist.getCenter().y))
             this.scene.time.addEvent({
                 delay: 75,

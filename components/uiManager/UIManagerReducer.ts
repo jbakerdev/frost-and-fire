@@ -1,4 +1,4 @@
-import { UIReducerActions, Modal, WAVE_SIZE } from '../../enum'
+import { UIReducerActions, Modal, WAVE_SIZE, WAVE_INTERVAL } from '../../enum'
 import { isNumber, isBoolean } from 'util';
 
 const appReducer = (state = getInitialState(), action:any):RState => {
@@ -7,15 +7,15 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.NEW_SESSION:
             return { ...getInitialState(), engineEvent: UIReducerActions.NEW_SESSION, modal:null }
         case UIReducerActions.START_WAVE:
-            return { ...state, activeWave: true, engineEvent: UIReducerActions.START_WAVE, colonistsRemaining: state.colonistsRemaining-WAVE_SIZE }
+            return { ...state, activeWave: true, engineEvent: UIReducerActions.START_WAVE, colonistsRemaining: state.colonistsRemaining-WAVE_SIZE, nextWave:WAVE_INTERVAL }
         case UIReducerActions.WAVE_SENT:
             return { ...state, activeWave: false}
         case UIReducerActions.SET_HOUR:
             return { ...state, hour: action.hour }
         case UIReducerActions.AIM_CRYO:
-            return { ...state, aimCryo: !state.aimCryo, engineEvent: UIReducerActions.AIM_CRYO }
+            return { ...state, aimCryo: !state.aimCryo, aimLaser:false, placingDrone:false, engineEvent: UIReducerActions.AIM_CRYO }
         case UIReducerActions.AIM_LASER:
-            return { ...state, aimLaser: !state.aimLaser, engineEvent: UIReducerActions.AIM_LASER}
+            return { ...state, aimLaser: !state.aimLaser, aimCryo:false, placingDrone:false, engineEvent: UIReducerActions.AIM_LASER}
         case UIReducerActions.CANCEL:
             return { ...state, aimCryo:false, aimLaser: false, placingDrone: false}
         case UIReducerActions.USE_REACTOR:
@@ -27,7 +27,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.COLONIST_LOST:
             return { ...state, colonistsRemaining: state.colonistsRemaining-1 }
         case UIReducerActions.START_PLACE_DRONE:
-            return { ...state, placingDrone: true}
+            return { ...state, placingDrone: true, aimCryo:false, aimLaser:false }
         case UIReducerActions.PLACE_DRONE:
             return { ...state, placingDrone: false, crew: state.crew-3}
         case UIReducerActions.NO_CHARGE:
@@ -38,6 +38,10 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, engineEvent: UIReducerActions.TOGGLE_AUDIO }
         case UIReducerActions.SHOW_MODAL:
             return { ...state, modal: action.modal }
+        case UIReducerActions.INC_WAVE:
+            let wave = state.nextWave-1
+            if(wave <= 0) wave = WAVE_INTERVAL
+            return { ...state, nextWave: wave }
         default:
             return state
     }
@@ -58,6 +62,7 @@ const getInitialState = ():RState => {
         maxReactorCharges: 6,
         colonistsRemaining: 100,
         colonistsSaved: 2,
-        crew: 2
+        crew: 2,
+        nextWave: WAVE_INTERVAL
     }
 }

@@ -60,15 +60,9 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
 
     takeDamage = () => {
         if(!this.invul){
-            this.scene.tweens.addCounter({
-                from: 255,
-                to: 0,
-                duration: 700,
-                onUpdate: (tween) => {
-                    var value = Math.floor(tween.getValue());
-                    this.setTintFill(Phaser.Display.Color.GetColor(value, 0, 0));
-                },
-                onComplete: () => {
+            this.scene.time.addEvent({
+                delay: 500,
+                callback: () => {
                     this.invul = false
                     this.clearTint()
                 }
@@ -80,7 +74,6 @@ export default class ColonistSprite extends Physics.Arcade.Sprite {
     }
 
     heal = (amount:number) => {
-        this.scene.sounds.heal.play()
         this.health+=amount
         this.setTintFill(0x00ff00)
         this.scene.tweens.addCounter({

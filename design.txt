@@ -72,9 +72,7 @@ tile types:
     cave entrance/ship exit
 
 
-fix healing drone visuals range and beam
-move entrance/exit tiles off of map
 playtest damage zone density curve increase per day cycle
 music / font
 mute button
-possible drone editing, role swap from heal to cleaning
+possibly add cleaning drone

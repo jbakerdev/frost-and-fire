@@ -1,5 +1,7 @@
 export const defaults = [
     { key: 'alarm', resource: require('./audio/alarm.mp3'), type: 'audio' },
+    { key: 'dead', resource: require('./audio/dead.mp3'), type: 'audio' },
+    { key: 'saved', resource: require('./audio/saved.mp3'), type: 'audio' },
     { key: 'cryo', resource: require('./audio/cryo.mp3'), type: 'audio' },
     { key: 'drone', resource: require('./audio/drone.mp3'), type: 'audio' },
     { key: 'heal', resource: require('./audio/heal.mp3'), type: 'audio' },
@@ -53,5 +55,6 @@ export const Icons = {
     sun_moon: require('./icon/sun_moon.png'),
     laser: require('./icon/laser.png'),
     cryo: require('./icon/cryo.png'),
-    drone: require('./icon/drone.png')
+    drone: require('./icon/drone.png'),
+    colonist: require('./colonist_walk.gif')
 }

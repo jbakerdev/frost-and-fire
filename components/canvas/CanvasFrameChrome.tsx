@@ -67,24 +67,24 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
         return (
             <div style={{position:'relative'}}>
                 <div style={{position:'absolute', top:0, left:0, display:'flex', width:'100%', justifyContent:'space-between', alignItems:'center'}}>
-                    <div style={{display:'flex', alignItems:'center', maxWidth:'75px'}}>
-                        <div style={{transition:'all 250ms', transform: 'rotate('+360*(this.props.hour/24)+'deg)', width:'32px', height:'32px'}}>{Icon(Icons.sun_moon, '', true)}</div>
-                        <h5>{getTimeText(this.props.hour)}</h5>
+                    <div style={{display:'flex', alignItems:'center'}}>
+                        <div style={{position:'relative'}}>
+                            <div style={{transition:'all 250ms', transform: 'rotate('+360*(this.props.hour/24)+'deg)', width:'64px', height:'64px'}}>{Icon(Icons.sun_moon, '', true)}</div>
+                            <div style={{position:'absolute', bottom:0, left:0, height:'50%', width:'100%', background:'black'}}/>
+                        </div>
+                        <h4 style={{marginLeft:'0.5em'}}>{getTimeText(this.props.hour)}</h4>
                     </div>
                     <div>
-                        <h5>Colonists {this.props.colonistsRemaining}</h5>
-                        <div>{Button(!this.props.activeWave, onStartWave, 'Run')}</div>
+                        <h6>Colonists {this.props.colonistsRemaining}</h6>
                     </div>
                     <div>
-                        <h5>Ship's Crew {this.props.colonistsSaved} / 50</h5>
-                        <h5>Spare Crew {this.props.crew}</h5>
+                        <h6>Ship's Crew {this.props.colonistsSaved} / 50</h6>
+                        <h6>Spare Crew {this.props.crew}</h6>
                     </div>
                 </div>
                 <CanvasFrame />
                 <div style={{position:'absolute', bottom:0, left:0, display:'flex'}}>
-                    <div style={{width:'100px', marginRight:'2em'}}>
-                        {ProgressBar(this.props.reactorCharges, this.props.maxReactorCharges, 'Reactor Power')}
-                    </div>
+                    <div style={{marginRight:'1em'}}>{Button(!this.props.activeWave, onStartWave, Icon(Icons.colonist, 'Signal a group of colonists'))}</div>
                     <div style={{marginRight:'1em', display:'flex', alignItems:'center'}}>
                         1: {Button(!this.props.aimLaser && this.props.reactorCharges > 0, onToggleAimLaser, 
                             Icon(Icons.laser, ''), 
@@ -97,6 +97,10 @@ export default class CanvasFrameChrome extends React.Component<Props, State> {
                         3: {Button(!this.props.placingDrone , onStartPlaceDrone, 
                             Icon(Icons.drone, ''), 
                             'A drone that heals colonists near it. Each one requires 3 crew to operate.')}</div>
+                    <div style={{width:'100px', marginRight:'2em', height:'32px'}}>
+                        <h6>Reactor</h6>
+                        {ProgressBar(this.props.reactorCharges, this.props.maxReactorCharges, 'Reactor Power')}
+                    </div>
                 </div>
             </div>
         )

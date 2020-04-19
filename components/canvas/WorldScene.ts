@@ -18,6 +18,8 @@ interface Sounds {
     rock: Sound.BaseSound
     start: Sound.BaseSound
     wave: Sound.BaseSound
+    dead: Sound.BaseSound
+    saved: Sound.BaseSound
 }
 
 export default class WorldScene extends Scene {
@@ -91,7 +93,9 @@ export default class WorldScene extends Scene {
             laser: this.sound.add('laser'),
             rock: this.sound.add('rock'),
             start: this.sound.add('start'),
-            wave: this.sound.add('wave')
+            wave: this.sound.add('wave'),
+            dead: this.sound.add('dead'),
+            saved: this.sound.add('saved')
         }
         this.deaths = this.add.group()
         this.map = this.make.tilemap({ key: 'map'})
@@ -202,7 +206,7 @@ export default class WorldScene extends Scene {
                 this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'cryo')
             else if(state.placingDrone || this.chooseDronePosition)
                 this.setSelectIconPosition({x: tile.getCenterX(), y: tile.getCenterY()}, 'drone')
-            else this.selectIcon.setVisible(false)
+            else this.selectIcon && this.selectIcon.setVisible(false)
         }
     }
 
@@ -256,7 +260,7 @@ export default class WorldScene extends Scene {
                 },
                 repeat: 5
             })
-            this.flashText(hour === NIGHTFALL-1 ? 'NIGHT IS APPROACHING' : 'DAWN IS APPROACHING', hour === NIGHTFALL-1 ? '#5555ff' : 'red')
+            this.flashText(hour === NIGHTFALL-1 ? 'NIGHT IS APPROACHING' : 'DAWN IS APPROACHING', hour === NIGHTFALL-1 ? '#00aaaa' : 'red')
         }
         onUpdateHour((store.getState().hour+1) % 24)
     }
@@ -265,6 +269,7 @@ export default class WorldScene extends Scene {
         let indexes = []
         this.colonistSprites.forEach((spr,i)=>{
             if(spr.health <= 0) {
+                this.sounds.dead.play()
                 this.deaths.get(spr.x, spr.y, 'bones')
                 indexes.push(i)
                 onLostColonist()
@@ -276,7 +281,7 @@ export default class WorldScene extends Scene {
     }
 
     launchWave = (isFrost:boolean) => {
-        let wave = this.add.tileSprite(0,32,64,this.map.heightInPixels*2, 'tiles', isFrost ? TileIndexes.frost.frostWave : TileIndexes.fire.fireWave).setDepth(2)
+        let wave = this.add.tileSprite(0,32,64,this.map.heightInPixels*2, 'tiles', isFrost ? TileIndexes.frost.frostWave : TileIndexes.fire.fireWave).setDepth(5)
         let rotator = this.time.addEvent({
             delay:200,
             repeat:-1,
@@ -292,17 +297,20 @@ export default class WorldScene extends Scene {
             onUpdate: ()=>{
                 let rect = wave.getBounds()
                 this.map.getTilesWithinShape(rect, undefined, undefined, 'terrain').forEach(tile=>{
+                    let doodad = this.map.getTileAt(tile.x,tile.y,false,'doodads')
                     if(isFrost){
-                        if(tile.collides) tile.index = TileIndexes.frost.impassible
+                        if(doodad) tile.index = TileIndexes.frost.passable
+                        else if(tile.collides) tile.index = TileIndexes.frost.impassible
                         else {
-                            if(Phaser.Math.Between(0,10)===10) tile.index = TileIndexes.frost.frostTile
+                            if(Phaser.Math.Between(0,1)===0) tile.index = TileIndexes.frost.frostTile
                             else tile.index = TileIndexes.frost.passable
                         }
                     }
                     else {
-                        if(tile.collides) tile.index = TileIndexes.fire.impassible
+                        if(doodad) tile.index = TileIndexes.fire.passable
+                        else if(tile.collides) tile.index = TileIndexes.fire.impassible
                         else {
-                            if(Phaser.Math.Between(0,10)===10) tile.index = TileIndexes.fire.fireTile
+                            if(Phaser.Math.Between(0,1)===0) tile.index = TileIndexes.fire.fireTile
                             else tile.index = TileIndexes.fire.passable
                         }
                     }
@@ -311,6 +319,7 @@ export default class WorldScene extends Scene {
                 for(var i=0;i<bodies.length;i++){
                     let spr = bodies[i].gameObject as ColonistSprite
                     this.deaths.get(spr.x, spr.y, 'bones')
+                    this.sounds.dead.play()
                     let j = this.colonistSprites.findIndex(cspr=>cspr.id === spr.id)
                     this.colonistSprites.splice(j,1)[0].destroy()
                 }
@@ -341,7 +350,7 @@ export default class WorldScene extends Scene {
 
     colonistHitFeature = (colonistSprite:any, tile:any) => {
         if(tile.index === TileIndexes.exit){
-            console.log('yay')
+            this.sounds.saved.play()
             let i = this.colonistSprites.findIndex(spr=>spr.id === colonistSprite.id)
             this.colonistSprites.splice(i,1)[0].destroy()
             onSavedColonist()
@@ -415,7 +424,7 @@ export default class WorldScene extends Scene {
         this.add.tween({
             targets: font,
             ease: 'Stepped',
-            easeParams:[3],
+            easeParams:[4],
             duration: 500,
             alpha: 0,
             yoyo:true,

@@ -19,7 +19,7 @@ export default class Splash extends React.Component {
          <CanvasFrameChrome /> : (
         <div>
             <div style={{opacity: this.state.transitionState === 1 ? 1:0, transition:'opacity 1s', width:'25em'}}>
-                <img style={{width:'-webkit-fill-available'}} src={require('../../assets/Cryptomnesic2.png')}/>
+                <img style={{width:'100%'}}  src={require('../../assets/Cryptomnesic2.png')}/>
                 <h3 style={{margin:'1em', textAlign:'center'}}>PRESENTS</h3>
             </div>
         </div>

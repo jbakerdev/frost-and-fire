@@ -219,6 +219,10 @@ export default class WorldScene extends Scene {
         })
     }
 
+    stopTimers = () => {
+        this.time.removeAllEvents()
+    }
+
     updateSelectedIcon = (gameObject?:DroneSprite) => {
         if(gameObject){
             this.setSelectIconPosition({x: gameObject.getCenter().x, y: gameObject.getCenter().y}, 'selected')
@@ -369,7 +373,10 @@ export default class WorldScene extends Scene {
             onLostColonist()
             this.colonistSprites.splice(j,1)[0].destroy()
             let state = store.getState()
-            if(state.colonistsRemaining < GOAL_CREW-state.colonistsSaved) onShowModal(Modal.LOSE)
+            if(state.colonistsRemaining < GOAL_CREW-state.colonistsSaved){
+                this.stopTimers()
+                onShowModal(Modal.LOSE)
+            } 
         }
     }
 
@@ -396,7 +403,10 @@ export default class WorldScene extends Scene {
             this.colonistSprites.splice(i,1)[0].destroy()
             onSavedColonist()
             let state = store.getState()
-            if(state.colonistsSaved >= GOAL_CREW && state.colonistsRemaining <= 0) onShowModal(Modal.WIN)
+            if(state.colonistsSaved >= GOAL_CREW && state.colonistsRemaining <= 0) {
+                this.stopTimers()
+                onShowModal(Modal.WIN)
+            }
         }
     }
 

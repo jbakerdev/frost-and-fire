@@ -109,10 +109,13 @@ export default class AStar extends Path {
 		this._fromX = fromX;
 		this._fromY = fromY;
         this._add(this._toX, this._toY, null);
-        let coords = []
+		let coords = []
+		let stack = []
 
 		while (this._todo.length) {
 			let item = this._todo.shift() as Item;
+			stack.push(item)
+	
 			let id = item.x+","+item.y;
 			if (id in this._done) { continue; }
 			this._done[id] = item;
@@ -131,7 +134,15 @@ export default class AStar extends Path {
 		}
 		
 		let item: Item | null = this._done[fromX+","+fromY];
-		if (!item) { return; }
+		if (!item) { 
+			//TODO: test partial path
+			item = stack.pop()
+			while (item) {
+				coords.push({x:item.x, y:item.y});
+				item = stack.pop()
+			}
+			return coords
+		}
 		
 		while (item) {
 			coords.push({x:item.x, y:item.y});
